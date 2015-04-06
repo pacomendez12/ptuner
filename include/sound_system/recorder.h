@@ -25,7 +25,6 @@ class Recorder{
 		int buffer_size;
 		int rate;
 		int depth;
-
 };
 
 #endif

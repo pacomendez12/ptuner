@@ -8,6 +8,7 @@ Recorder::Recorder(int rate, int depth){
 	setParameters(rate, depth);
 }
 
+void
 Recorder::setParameters(int rate, int depth){
 	this->rate = rate;
 	this->depth = depth;

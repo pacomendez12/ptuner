@@ -4,7 +4,7 @@
  * capturing sound
  */
 
-#include "recoder.h"
+#include "recorder.h"
 #include <alsa/asoundlib.h>
 
 #ifndef RECORDER_ALSA_H

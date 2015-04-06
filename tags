@@ -1,0 +1,38 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ALSA	include/sound_system/sound_system.h	6;"	d
+DEFAULT_SOUND_SYSTEM	include/sound_system/sound_system.h	9;"	d
+GCC	tests/Makefile	/^GCC=gcc$/;"	m
+JACK	include/sound_system/sound_system.h	7;"	d
+LIBS	tests/Makefile	/^LIBS=-lasound$/;"	m
+PLAYER_H	include/sound_system/player.h	8;"	d
+Player	include/sound_system/player.h	/^class Player{$/;"	c
+RECORDER_ALSA_H	include/sound_system/recorder_alsa.h	11;"	d
+RECORDER_H	include/sound_system/recorder.h	8;"	d
+Recorder	include/sound_system/recorder.h	/^class Recorder{$/;"	c
+Recorder	src/sound_system/recorder.cpp	/^Recorder::Recorder():Recorder(44100, 24){}$/;"	f	class:Recorder
+Recorder	src/sound_system/recorder.cpp	/^Recorder::Recorder(int rate, int depth){$/;"	f	class:Recorder
+Recorder_Alsa	include/sound_system/recorder_alsa.h	/^class Recorder_Alsa : Recorder{$/;"	c
+Recorder_Alsa	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::Recorder_Alsa():Recorder_Alsa(44100, 24){}$/;"	f	class:Recorder_Alsa
+Recorder_Alsa	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::Recorder_Alsa(int rate, int depth){$/;"	f	class:Recorder_Alsa
+SOUND_SYSTEM_H	include/sound_system/sound_system.h	2;"	d
+buffer_size	include/sound_system/player.h	/^		int buffer_size;$/;"	m	class:Player
+buffer_size	include/sound_system/recorder.h	/^		int buffer_size;$/;"	m	class:Recorder
+depth	include/sound_system/player.h	/^		int depth;$/;"	m	class:Player
+depth	include/sound_system/recorder.h	/^		int depth;$/;"	m	class:Recorder
+main	tests/play.c	/^int main(int argc, char * argv[]){$/;"	f
+player	include/sound_system/sound_system.h	/^	Player player;$/;"	m	class:sound_system
+rate	include/sound_system/player.h	/^		int rate;$/;"	m	class:Player
+rate	include/sound_system/recorder.h	/^		int rate;$/;"	m	class:Recorder
+recorder	include/sound_system/sound_system.h	/^	Recorder recorder;$/;"	m	class:sound_system
+s_system_t	include/sound_system/sound_system.h	/^typedef int s_system_t;$/;"	t
+select_sound_system	src/sound_system/sound_system.cpp	/^sound_system::select_sound_system(s_system_t type){$/;"	f	class:sound_system
+setParameters	src/sound_system/recorder.cpp	/^Recorder::setParameters(int rate, int depth){$/;"	f	class:Recorder
+sound_system	include/sound_system/sound_system.h	/^class sound_system{$/;"	c
+sound_system	src/sound_system/sound_system.cpp	/^sound_system::sound_system(): sound_system(ALSA){}$/;"	f	class:sound_system
+sound_system	src/sound_system/sound_system.cpp	/^sound_system::sound_system(s_system_t type){$/;"	f	class:sound_system
+type	include/sound_system/sound_system.h	/^	s_system_t type;$/;"	m	class:sound_system

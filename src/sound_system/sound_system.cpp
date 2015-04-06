@@ -1,4 +1,4 @@
-#include <sound_system.h>
+#include <sound_system/sound_system.h>
 
 /*
  * this file defines how ptuner capture audio from microphone,
@@ -7,16 +7,57 @@
  * is using, in fact I want it to support JACK too at least.
  */
 
-sound_system::sound_system(): sound_system(ALSA){}
+sound_system::sound_system(): sound_system(DEFAULT_SOUND_SYSTEM){}
 
 sound_system::sound_system(s_system_t type){
+	this->type = NONE;
+	system_ = NULL;
 	select_sound_system(type);
 }
 
+void
 sound_system::select_sound_system(s_system_t type){
+	s_system_t tmp_type;
 	if(type >= ALSA && type <= JACK){
-		this->type = type;
+		tmp_type = type;
 	} else {
-		this->type = DEFAULT_SOUND_SYSTEM;
+		tmp_type = DEFAULT_SOUND_SYSTEM;
 	}
+
+	/*we are going to check if the system is created before*/
+	if(system_ != NULL){
+		delete system_;
+	}
+
+	switch(tmp_type){
+		case ALSA:
+			system_ = new system_alsa();
+			break;
+		case JACK:
+			system_ = new system_jack();
+			break;
+		default:
+			system_ = NULL;
+			tmp_type = NONE;
+			break;
+	}
+
+	/*Refreshing attribute type*/
+	this->type = tmp_type;
 } 
+
+
+result_t
+sound_system::play(){
+	return system_->play();
+}
+
+result_t
+sound_system::stop(){
+	return system_->stop();
+}
+
+result_t
+sound_system::record(){
+	return system_->record();
+}

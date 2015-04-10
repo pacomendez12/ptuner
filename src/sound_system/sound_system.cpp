@@ -6,6 +6,7 @@
  * of this file is to be transparent over what sound system
  * is using, in fact I want it to support JACK too at least.
  */
+using namespace Sound_system;
 
 sound_system::sound_system(): sound_system(DEFAULT_SOUND_SYSTEM){}
 
@@ -49,15 +50,18 @@ sound_system::select_sound_system(s_system_t type){
 
 result_t
 sound_system::play(){
+	assert(system_ != NULL);
 	return system_->play();
 }
 
 result_t
 sound_system::stop(){
+	assert(system_ != NULL);
 	return system_->stop();
 }
 
 result_t
 sound_system::record(){
+	assert(system_ != NULL);
 	return system_->record();
 }

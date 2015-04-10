@@ -15,15 +15,9 @@ class Player{
 		 **/
 		~Player();
 		int virtual setStream(void * buff, int size) = 0;
-		virtual int initSoundSystem() = 0;
-		virtual int finishSoundSystem() = 0;
 
-		void setParameters(int rate, int depth);
-
-	private:
-		int buffer_size;
-		int rate;
-		int depth;
+		/*It stops any pending transaction*/
+		void virtual stop() = 0;
 
 };
 

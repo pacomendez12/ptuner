@@ -2,10 +2,12 @@
 #define SYSTEM_JACK_H
 #include "system.h"
 
-class system_jack :public system
+
+class system_jack : public A_system
 {
 public:
 	system_jack();
+	system_jack(system_mode_t mode);
 	~system_jack();
 
 	/*The most abstract methods*/
@@ -13,11 +15,11 @@ public:
 	result_t stop();
 	result_t record();
 
-private:
-	void init_system();
+protected:
+	int init_system();
 	void finish_system();
 
 };
 
 
-#endif /* end of include guard: SYSTEM_H */
+#endif /* end of include guard: SYSTEM_JACK_H */

@@ -10,21 +10,13 @@
 class Recorder{
 	public:
 		Recorder();
-		Recorder(int rate, int depth);
 		/*Destructor is called when the tuner finish or when is 
 		 * changed the sound system.
 		 **/
 		~Recorder();
 		int virtual getStream(void * buff, int size) = 0;
-		virtual int initSoundSystem() = 0;
-		virtual int finishSoundSystem() = 0;
+		void virtual stop() = 0;
 
-		void setParameters(int rate, int depth);
-
-	private:
-		int buffer_size;
-		int rate;
-		int depth;
 };
 
 #endif

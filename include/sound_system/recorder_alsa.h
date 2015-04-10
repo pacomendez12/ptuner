@@ -3,12 +3,11 @@
  * in a subclass because it's dependent of the system used for 
  * capturing sound
  */
+#ifndef RECORDER_ALSA_H
+#define RECORDER_ALSA_H
 
 #include "recorder.h"
 #include <alsa/asoundlib.h>
-
-#ifndef RECORDER_ALSA_H
-#define RECORDER_ALSA_H
 
 class Recorder_Alsa : Recorder{
 	public:

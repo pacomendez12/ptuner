@@ -43,7 +43,7 @@ system_alsa::init_system(){
 	snd_pcm_hw_params_t * hw_params;
 
 	if((err = snd_pcm_open(&playback_handle, card_name, 
-					SND_PCM_STREAM_PLAYBACK | SND_PCM_STREAM_CAPTURE, 0)) < 0){
+					SND_PCM_STREAM_PLAYBACK, 0)) < 0){
 		fprintf(stderr, "Cannot open audio device %s (%s)\n", card_name, snd_strerror(err));
 		exit(1);
 	}

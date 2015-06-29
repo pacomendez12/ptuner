@@ -18,6 +18,7 @@ class Recorder_Alsa : Recorder{
 		 **/
 		~Recorder_Alsa();
 		int getStream(void * buff, int size);
+		void stop();
 
 		/*FIXME: I'm not sure now if the next methods will be part
 		 * of this class

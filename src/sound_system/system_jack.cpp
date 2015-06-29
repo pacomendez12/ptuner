@@ -19,6 +19,22 @@ system_jack::system_jack(system_mode_t mode){
 system_jack::~system_jack(){
 }
 
+
+result_t
+system_jack::play() {}
+
+
+result_t
+system_jack::stop() {}
+
+
+result_t
+system_jack::record() {}
+
+
+int
+system_jack::init_system() {}
+
 void
 system_jack::finish_system(){
 	/*We need to stop every transaction yet alive*/
@@ -40,7 +56,7 @@ system_jack::finish_system(){
 	if( recorder != NULL)
 		delete recorder;
 
-	if( player != NULL)
-		delete player;
+	/*if( player != NULL)
+		delete player;*/
 	
 }

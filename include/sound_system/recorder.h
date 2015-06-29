@@ -13,7 +13,7 @@ class Recorder{
 		/*Destructor is called when the tuner finish or when is 
 		 * changed the sound system.
 		 **/
-		~Recorder();
+		virtual ~Recorder();
 		int virtual getStream(void * buff, int size) = 0;
 		void virtual stop() = 0;
 

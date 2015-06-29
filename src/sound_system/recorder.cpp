@@ -5,4 +5,6 @@
 Recorder::Recorder(){
 }
 
+Recorder::~Recorder() {}
+
 

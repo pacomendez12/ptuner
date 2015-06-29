@@ -16,6 +16,9 @@ sound_system::sound_system(s_system_t type){
 	select_sound_system(type);
 }
 
+sound_system::~sound_system() {
+}
+
 void
 sound_system::select_sound_system(s_system_t type){
 	s_system_t tmp_type;

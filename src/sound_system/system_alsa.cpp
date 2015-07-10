@@ -39,20 +39,27 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 	parameters.capture_handle = NULL;
 	parameters.hw_params = NULL;
 
+	/* FIXME i'm using dafault name only for test purposes */
 	strncpy(parameters.card_name, "default", CARD_NAME_SIZE);
 	parameters.buffer = new (std::nothrow) buffer_data_t[parameters.buffer_size];
 	if(parameters.buffer == NULL){
-		return;
+		exit(1);
 	}
 
 	/* setting default number of channels */
 	parameters.set_number_channels(ALSA_DEFAULT_NUMBER_CHANNELS);
+	int array_size = ARRAY_SIZE(alsa_valid_rates);
+	parameters.set_valid_rates_array(alsa_valid_rates, array_size); 
+	slog(ALSA_TAG, "alsa_valid_rates has %d elements", array_size);
+	parameters.set_rate(ALSA_DEFAULT_RATES);
+	/*TODO set rate and depth */ 
 
 	/*Here is where the system starts*/
 	init_system();
 }
 
 system_alsa::~system_alsa(){
+	finish_system();
 }
 
 int
@@ -61,6 +68,7 @@ system_alsa::init_system(){
 
 	slog(ALSA_TAG, "Starting alsa sound system");
 
+	/*FIXME it's not working on both sides, record and capture */
 	if((err = snd_pcm_open(&parameters.capture_handle, parameters.card_name, 
 					SND_PCM_STREAM_CAPTURE, 0)) < 0){
 		slog(ALSA_TAG, "Cannot open audio device %s (%s)\n", 
@@ -97,6 +105,7 @@ system_alsa::init_system(){
 		slog(ALSA_TAG, "Cannot set sample rate (%s)\n", snd_strerror(err));
 		exit(1);
 	}
+	slog(ALSA_TAG, "Rate setted as %d\n", parameters.rate);
 
 	if((err = snd_pcm_hw_params_set_channels(parameters.capture_handle, 
 					parameters.hw_params, parameters.channels)) < 0){
@@ -111,21 +120,22 @@ system_alsa::init_system(){
 
 	snd_pcm_hw_params_free(parameters.hw_params);
 
-/*
-	if((err = snd_pcm_prepare(capture_handle)) < 0){
+	if((err = snd_pcm_prepare(parameters.capture_handle)) < 0){
 		fprintf(stderr, "Cannot prepare audio interface for use (%s)\n", snd_strerror(err));
 		exit(1);
 	}
 
+	int i;
 	for(i = 0; i < 10; ++i){
-		if((err = snd_pcm_writei(capture_handle, buf, 128)) != 128){
-			fprintf(stderr, "Write to audio interface failed (%s)\n", snd_strerror(err));
+		if((err = snd_pcm_readi(parameters.capture_handle, 
+						parameters.buffer, parameters.buffer_size)) != parameters.buffer_size){
+			fprintf(stderr, "Write to audio interface failed (%s) err = %d\n", snd_strerror(err), err);
 			exit(1);
+		} else {
+			slog(ALSA_TAG, "Read well %d bytes", err);
 		}
 	}
 
-	snd_pc_close(capture_handle);
-*/
 }
 
 result_t
@@ -156,11 +166,12 @@ system_alsa::finish_system(){
 			status = STOPPED;
 	}
 
-	/*we can delete objects*/
+	/* we can delete objects now */
 	if (recorder != NULL)
 		delete recorder;
 
 /*	if ( player != NULL)
 		delete player;*/
+	snd_pcm_close(parameters.capture_handle);
 	
 }

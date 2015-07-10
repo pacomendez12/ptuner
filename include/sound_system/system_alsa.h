@@ -21,6 +21,8 @@
 /* Default number of channels */
 #define ALSA_DEFAULT_NUMBER_CHANNELS 2
 
+#define ALSA_DEFAULT_RATES 44100
+
 /* Tag for logs */
 #define ALSA_TAG "SYSTEM_ALSA"
 
@@ -49,6 +51,7 @@ public:
 	result_t stop();
 	result_t record();
 
+
 protected:
 	int init_system();
 	void finish_system();
@@ -58,7 +61,11 @@ protected:
 private:
 	/*for error handling purposes*/
 	int err;
+
 };
 
+	/* TODO try to keep this value inside the class */
+	const static unsigned int alsa_valid_rates[] = { 44100 };
 
+//constexpr const unsigned int system_alsa::alsa_valid_rates[1];
 #endif /* end of include guard: SYSTEM_H */

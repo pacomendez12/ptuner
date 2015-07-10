@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <util/array.h>
 #include "recorder.h"
 #include "player.h"
 #include "definitions.h"
@@ -15,6 +16,7 @@
 /* Default buffer size in case a specific sound system wants to use it */
 #define SYSTEM_DEFAULT_BUFFER_SIZE 128
 
+#define DEFAULT_NUMBER_CHANNELS 1
 
 #define DEFAULT_RATE 44100
 
@@ -49,36 +51,16 @@ protected:
 	
 	status_t status;
 	
+	void set_number_channels(unsigned int);
+	void set_rate(unsigned int);
+	void set_depth(unsigned int);
 
-	/*private methods*/
-	virtual int init_system() = 0;
-	virtual void finish_system() = 0;
-
-};
+	unsigned int get_number_channels();
+	unsigned int get_rate();
+	unsigned int get_depth();
 
 
-class system_parameters {
-public:
-	system_mode_t mode;
-
-	int buffer_size;
-	unsigned int rate;
-	int depth;
-	short channels;
-	buffer_data_t * buffer;
-
-	/* An array with valid values to be setted for the system */
-	int * valid_rates;
-	int size_valid_rates;
-	
-	/* Configuration methods */
-	void set_number_channels(int);
-	void set_rate(int);
-	void set_depth(int);
-
-	int get_number_channels(int);
-	int get_rate(int);
-	int get_depth(int);
+	void set_valid_rates_array(const unsigned int *, int size);
 };
 
 #endif /* end of include guard: SYSTEM_H */

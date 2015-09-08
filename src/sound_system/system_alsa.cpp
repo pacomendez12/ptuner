@@ -71,57 +71,57 @@ system_alsa::init_system(){
 	/*FIXME it's not working on both sides, record and capture */
 	if((err = snd_pcm_open(&parameters.capture_handle, parameters.card_name, 
 					SND_PCM_STREAM_CAPTURE, 0)) < 0){
-		slog(ALSA_TAG, "Cannot open audio device %s (%s)\n", 
+		slog(ALSA_TAG, "Cannot open audio device %s (%s)", 
 				parameters.card_name, snd_strerror(err));
 		exit(1);
 	}
 
 	if((err = snd_pcm_hw_params_malloc(&parameters.hw_params)) < 0){
-		slog(ALSA_TAG, "Cannot allocate hardate parameter structure (%s)\n", 
+		slog(ALSA_TAG, "Cannot allocate hardate parameter structure (%s)", 
 				snd_strerror(err));
 		exit(1);
 	}
 	if((err = snd_pcm_hw_params_any(parameters.capture_handle, 
 					parameters.hw_params)) < 0) {
-		slog(ALSA_TAG, "Cannot initialize hardware parameter structure (%s)\n", 
+		slog(ALSA_TAG, "Cannot initialize hardware parameter structure (%s)", 
 				snd_strerror(err));
 		exit(1);
 	}
 
 	if((err = snd_pcm_hw_params_set_access(parameters.capture_handle, 
 					parameters.hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-		slog(ALSA_TAG, "Cannot set access type (%s)\n", snd_strerror(err));
+		slog(ALSA_TAG, "Cannot set access type (%s)", snd_strerror(err));
 		exit(1);
 	}
 
 	if((err = snd_pcm_hw_params_set_format(parameters.capture_handle, 
 					parameters.hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
-		slog(ALSA_TAG, "Cannot set sample format (%s)\n", snd_strerror(err));
+		slog(ALSA_TAG, "Cannot set sample format (%s)", snd_strerror(err));
 		exit(1);
 	}
 
 	if((err = snd_pcm_hw_params_set_rate_near(parameters.capture_handle, 
 					parameters.hw_params, &parameters.rate, &dir)) < 0) {
-		slog(ALSA_TAG, "Cannot set sample rate (%s)\n", snd_strerror(err));
+		slog(ALSA_TAG, "Cannot set sample rate (%s)", snd_strerror(err));
 		exit(1);
 	}
-	slog(ALSA_TAG, "Rate setted as %d\n", parameters.rate);
+	slog(ALSA_TAG, "Rate setted as %d", parameters.rate);
 
 	if((err = snd_pcm_hw_params_set_channels(parameters.capture_handle, 
 					parameters.hw_params, parameters.channels)) < 0){
-		slog(ALSA_TAG, "Cannot set channel count (%s)\n", snd_strerror(err));
+		slog(ALSA_TAG, "Cannot set channel count (%s)", snd_strerror(err));
 		exit(1);
 	}
 
 	if((err = snd_pcm_hw_params(parameters.capture_handle, parameters.hw_params)) < 0){
-		slog(ALSA_TAG, "Cannot set parameters (%s)\n", snd_strerror(err));
+		slog(ALSA_TAG, "Cannot set parameters (%s)", snd_strerror(err));
 		exit(1);
 	}
 
 	snd_pcm_hw_params_free(parameters.hw_params);
 
 	if((err = snd_pcm_prepare(parameters.capture_handle)) < 0){
-		fprintf(stderr, "Cannot prepare audio interface for use (%s)\n", snd_strerror(err));
+		fprintf(stderr, "Cannot prepare audio interface for use (%s)", snd_strerror(err));
 		exit(1);
 	}
 
@@ -129,7 +129,7 @@ system_alsa::init_system(){
 	for(i = 0; i < 10; ++i){
 		if((err = snd_pcm_readi(parameters.capture_handle, 
 						parameters.buffer, parameters.buffer_size)) != parameters.buffer_size){
-			fprintf(stderr, "Write to audio interface failed (%s) err = %d\n", snd_strerror(err), err);
+			fprintf(stderr, "Write to audio interface failed (%s) err = %d", snd_strerror(err), err);
 			exit(1);
 		} else {
 			slog(ALSA_TAG, "Read well %d bytes", err);

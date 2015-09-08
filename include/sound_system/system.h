@@ -63,4 +63,34 @@ protected:
 	void set_valid_rates_array(const unsigned int *, int size);
 };
 
+
+class system_parameters {
+
+	public:
+		int buffer_size;
+		buffer_data_t * buffer;
+		unsigned int rate;
+		unsigned int channels;
+		unsigned int * valid_rates;
+		int size_valid_rates;
+		unsigned int depth;
+
+		system_parameters();
+		~system_parameters();
+
+
+		void set_number_channels(unsigned int n_channels);
+		void set_valid_rates_array(const unsigned int * array_rates
+				, int array_size);
+		void set_rate(unsigned int rate);
+		void set_depth(unsigned int depth);
+
+
+		unsigned get_number_channels();
+		unsigned get_rate();
+		unsigned get_depth();
+};
+
+
+
 #endif /* end of include guard: SYSTEM_H */

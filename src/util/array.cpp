@@ -1,5 +1,6 @@
 #include <util/array.h>
-/*
+
+#if 0
 template <typename T>
 bool value_in_array(T value, T * array, int size) 
 {
@@ -12,4 +13,5 @@ bool value_in_array(T value, T * array, int size)
 }
 
 
-void foo() {}*/
+void foo() {}
+#endif

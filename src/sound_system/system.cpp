@@ -8,7 +8,7 @@
 system_parameters::~system_parameters() 
 {
 	if (valid_rates != NULL) {
-		delete valid_rates;
+		delete [] valid_rates;
 		size_valid_rates = 0;
 	}
 }
@@ -68,10 +68,10 @@ void
 system_parameters::set_valid_rates_array(const unsigned int * arr, int size)
 {
 	if (arr != NULL) {
-		valid_rates = new unsigned int[size];
-		memcpy(valid_rates, arr, size);
-		size_valid_rates = size;
-	} else {
-		valid_rates = NULL;
+		delete [] valid_rates;
 	}
+
+	valid_rates = new unsigned int[size];
+	memcpy(valid_rates, arr, size);
+	size_valid_rates = size;
 }

@@ -4,35 +4,121 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-ALSA	include/sound_system/sound_system.h	6;"	d
-DEFAULT_SOUND_SYSTEM	include/sound_system/sound_system.h	9;"	d
+ALSA	include/sound_system/definitions.h	6;"	d
+ALSA_CONFIGS	include/sound_system/system_alsa.h	13;"	d
+ALSA_DEFAULT_BUFFER_SIZE	include/sound_system/system_alsa.h	19;"	d
+ALSA_DEFAULT_NUMBER_CHANNELS	include/sound_system/system_alsa.h	22;"	d
+ALSA_DEFAULT_RATES	include/sound_system/system_alsa.h	24;"	d
+ALSA_TAG	include/sound_system/system_alsa.h	27;"	d
+ARRAY_H	include/util/array.h	3;"	d
+ARRAY_SIZE	include/util/array.h	5;"	d
+A_system	include/sound_system/system.h	/^class A_system {$/;"	c
+CARD_NAME_SIZE	include/sound_system/system_alsa.h	16;"	d
+DEFAULT_NUMBER_CHANNELS	include/sound_system/system.h	19;"	d
+DEFAULT_RATE	include/sound_system/system.h	21;"	d
+DEFAULT_SOUND_SYSTEM	include/sound_system/definitions.h	9;"	d
+DEFINITIONS_H	include/sound_system/definitions.h	2;"	d
+ERROR_RESULT	include/sound_system/definitions.h	/^enum result_t { ERROR_RESULT = 0, OK_RESULT};$/;"	e	enum:result_t
+FLAGS	Makefile	/^FLAGS=-std=c++11 -fPIC$/;"	m
+FLAGS_BIN	Makefile	/^FLAGS_BIN=-std=c++11$/;"	m
+GCC	Makefile	/^GCC=g++$/;"	m
 GCC	tests/Makefile	/^GCC=gcc$/;"	m
-JACK	include/sound_system/sound_system.h	7;"	d
+JACK	include/sound_system/definitions.h	7;"	d
+LIBS	Makefile	/^LIBS=-lasound$/;"	m
 LIBS	tests/Makefile	/^LIBS=-lasound$/;"	m
+NONE	include/sound_system/definitions.h	5;"	d
+OBJ	Makefile	/^OBJ=$(wildcard .\/*.o)$/;"	m
+OK_RESULT	include/sound_system/definitions.h	/^enum result_t { ERROR_RESULT = 0, OK_RESULT};$/;"	e	enum:result_t
 PLAYER_H	include/sound_system/player.h	8;"	d
+PLAYING	include/sound_system/definitions.h	/^enum status_t {PLAYING = 0, RECORDING, STOPPED};$/;"	e	enum:status_t
 Player	include/sound_system/player.h	/^class Player{$/;"	c
-RECORDER_ALSA_H	include/sound_system/recorder_alsa.h	11;"	d
+RECORDER_ALSA_H	include/sound_system/recorder_alsa.h	7;"	d
 RECORDER_H	include/sound_system/recorder.h	8;"	d
+RECORDING	include/sound_system/definitions.h	/^enum status_t {PLAYING = 0, RECORDING, STOPPED};$/;"	e	enum:status_t
 Recorder	include/sound_system/recorder.h	/^class Recorder{$/;"	c
-Recorder	src/sound_system/recorder.cpp	/^Recorder::Recorder():Recorder(44100, 24){}$/;"	f	class:Recorder
-Recorder	src/sound_system/recorder.cpp	/^Recorder::Recorder(int rate, int depth){$/;"	f	class:Recorder
+Recorder	src/sound_system/recorder.cpp	/^Recorder::Recorder(){$/;"	f	class:Recorder
 Recorder_Alsa	include/sound_system/recorder_alsa.h	/^class Recorder_Alsa : Recorder{$/;"	c
-Recorder_Alsa	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::Recorder_Alsa():Recorder_Alsa(44100, 24){}$/;"	f	class:Recorder_Alsa
-Recorder_Alsa	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::Recorder_Alsa(int rate, int depth){$/;"	f	class:Recorder_Alsa
+Recorder_Alsa	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::Recorder_Alsa() : Recorder_Alsa(41000, 24){$/;"	f	class:Recorder_Alsa
+Recorder_Alsa	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::Recorder_Alsa(int rate, int depth) {$/;"	f	class:Recorder_Alsa
 SOUND_SYSTEM_H	include/sound_system/sound_system.h	2;"	d
-buffer_size	include/sound_system/player.h	/^		int buffer_size;$/;"	m	class:Player
-buffer_size	include/sound_system/recorder.h	/^		int buffer_size;$/;"	m	class:Recorder
-depth	include/sound_system/player.h	/^		int depth;$/;"	m	class:Player
-depth	include/sound_system/recorder.h	/^		int depth;$/;"	m	class:Recorder
+SRC	Makefile	/^SRC=$(wildcard src\/sound_system\/*.cpp) $(wildcard src\/util\/*.cpp)$/;"	m
+STOPPED	include/sound_system/definitions.h	/^enum status_t {PLAYING = 0, RECORDING, STOPPED};$/;"	e	enum:status_t
+SYSTEM_ALSA_H	include/sound_system/system_alsa.h	2;"	d
+SYSTEM_DEFAULT_BUFFER_SIZE	include/sound_system/system.h	17;"	d
+SYSTEM_H	include/sound_system/system.h	4;"	d
+SYSTEM_JACK_H	include/sound_system/system_jack.h	2;"	d
+SYSTEM_PLAYER	include/sound_system/system.h	13;"	d
+SYSTEM_RECORDER	include/sound_system/system.h	14;"	d
+Sound_system	include/sound_system/sound_system.h	/^namespace Sound_system{$/;"	n
+alsa_system_parameters	include/sound_system/system_alsa.h	/^class alsa_system_parameters : public system_parameters {$/;"	c
+alsa_valid_rates	include/sound_system/system_alsa.h	/^	const static unsigned int alsa_valid_rates[] = { 44100 };$/;"	v
+buffer	include/sound_system/system.h	/^		buffer_data_t * buffer;$/;"	m	class:system_parameters
+buffer_data_t	include/sound_system/system.h	/^typedef short buffer_data_t;$/;"	t
+buffer_size	include/sound_system/system.h	/^		int buffer_size;$/;"	m	class:system_parameters
+buffer_size_t	include/sound_system/system.h	/^typedef int buffer_size_t;$/;"	t
+capture_handle	include/sound_system/system_alsa.h	/^	snd_pcm_t * capture_handle;$/;"	m	class:alsa_system_parameters
+card_name	include/sound_system/system_alsa.h	/^	char card_name[CARD_NAME_SIZE];$/;"	m	class:alsa_system_parameters
+channels	include/sound_system/system.h	/^		unsigned int channels;$/;"	m	class:system_parameters
+depth	include/sound_system/system.h	/^		unsigned int depth;$/;"	m	class:system_parameters
+err	include/sound_system/system_alsa.h	/^	int err;$/;"	m	class:system_alsa
+finish_system	src/sound_system/system_alsa.cpp	/^system_alsa::finish_system(){$/;"	f	class:system_alsa
+finish_system	src/sound_system/system_jack.cpp	/^system_jack::finish_system(){$/;"	f	class:system_jack
+getStream	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::getStream(void * buff, int size) {$/;"	f	class:Recorder_Alsa
+get_depth	src/sound_system/system.cpp	/^system_parameters::get_depth()$/;"	f	class:system_parameters
+get_number_channels	src/sound_system/system.cpp	/^system_parameters::get_number_channels()$/;"	f	class:system_parameters
+get_rate	src/sound_system/system.cpp	/^system_parameters::get_rate()$/;"	f	class:system_parameters
+hw_params	include/sound_system/system_alsa.h	/^	snd_pcm_hw_params_t * hw_params;$/;"	m	class:alsa_system_parameters
+init_system	src/sound_system/system_alsa.cpp	/^system_alsa::init_system(){$/;"	f	class:system_alsa
+init_system	src/sound_system/system_jack.cpp	/^system_jack::init_system() {}$/;"	f	class:system_jack
+main	src/main.cpp	/^int main(int argc, char * argv[])$/;"	f
 main	tests/play.c	/^int main(int argc, char * argv[]){$/;"	f
-player	include/sound_system/sound_system.h	/^	Player player;$/;"	m	class:sound_system
-rate	include/sound_system/player.h	/^		int rate;$/;"	m	class:Player
-rate	include/sound_system/recorder.h	/^		int rate;$/;"	m	class:Recorder
-recorder	include/sound_system/sound_system.h	/^	Recorder recorder;$/;"	m	class:sound_system
-s_system_t	include/sound_system/sound_system.h	/^typedef int s_system_t;$/;"	t
+parameters	include/sound_system/system_alsa.h	/^	alsa_system_parameters parameters;$/;"	m	class:system_alsa
+play	src/sound_system/sound_system.cpp	/^sound_system::play(){$/;"	f	class:sound_system
+play	src/sound_system/system_alsa.cpp	/^system_alsa::play() {}$/;"	f	class:system_alsa
+play	src/sound_system/system_jack.cpp	/^system_jack::play() {}$/;"	f	class:system_jack
+playback_handle	include/sound_system/system_alsa.h	/^	snd_pcm_t * playback_handle;$/;"	m	class:alsa_system_parameters
+player	include/sound_system/system.h	/^	Player * player;$/;"	m	class:A_system
+rate	include/sound_system/system.h	/^		unsigned int rate;$/;"	m	class:system_parameters
+record	src/sound_system/sound_system.cpp	/^sound_system::record(){$/;"	f	class:sound_system
+record	src/sound_system/system_alsa.cpp	/^system_alsa::record() {}$/;"	f	class:system_alsa
+record	src/sound_system/system_jack.cpp	/^system_jack::record() {}$/;"	f	class:system_jack
+recorder	include/sound_system/system.h	/^	Recorder * recorder;$/;"	m	class:A_system
+result_t	include/sound_system/definitions.h	/^enum result_t { ERROR_RESULT = 0, OK_RESULT};$/;"	g
+s_system_t	include/sound_system/definitions.h	/^typedef int s_system_t;$/;"	t
 select_sound_system	src/sound_system/sound_system.cpp	/^sound_system::select_sound_system(s_system_t type){$/;"	f	class:sound_system
-setParameters	src/sound_system/recorder.cpp	/^Recorder::setParameters(int rate, int depth){$/;"	f	class:Recorder
-sound_system	include/sound_system/sound_system.h	/^class sound_system{$/;"	c
-sound_system	src/sound_system/sound_system.cpp	/^sound_system::sound_system(): sound_system(ALSA){}$/;"	f	class:sound_system
+set_depth	src/sound_system/system.cpp	/^system_parameters::set_depth(unsigned int de)$/;"	f	class:system_parameters
+set_number_channels	src/sound_system/system.cpp	/^system_parameters::set_number_channels(unsigned int ch) $/;"	f	class:system_parameters
+set_rate	src/sound_system/system.cpp	/^system_parameters::set_rate(unsigned int ra)$/;"	f	class:system_parameters
+set_valid_rates_array	src/sound_system/system.cpp	/^system_parameters::set_valid_rates_array(const unsigned int * arr, int size)$/;"	f	class:system_parameters
+size_valid_rates	include/sound_system/system.h	/^		int size_valid_rates;$/;"	m	class:system_parameters
+slog	src/sound_system/logger.cpp	/^A_system::slog(const char * tag, const char * fmt, ...)$/;"	f	class:A_system
+sound_system	include/sound_system/sound_system.h	/^	class sound_system {$/;"	c	namespace:Sound_system
+sound_system	src/sound_system/sound_system.cpp	/^sound_system::sound_system(): sound_system(DEFAULT_SOUND_SYSTEM){}$/;"	f	class:sound_system
 sound_system	src/sound_system/sound_system.cpp	/^sound_system::sound_system(s_system_t type){$/;"	f	class:sound_system
-type	include/sound_system/sound_system.h	/^	s_system_t type;$/;"	m	class:sound_system
+status	include/sound_system/system.h	/^	status_t status;$/;"	m	class:A_system
+status_t	include/sound_system/definitions.h	/^enum status_t {PLAYING = 0, RECORDING, STOPPED};$/;"	g
+stop	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::stop() {$/;"	f	class:Recorder_Alsa
+stop	src/sound_system/sound_system.cpp	/^sound_system::stop(){$/;"	f	class:sound_system
+stop	src/sound_system/system_alsa.cpp	/^system_alsa::stop() {}$/;"	f	class:system_alsa
+stop	src/sound_system/system_jack.cpp	/^system_jack::stop() {}$/;"	f	class:system_jack
+system_	include/sound_system/sound_system.h	/^			A_system * system_;$/;"	m	class:Sound_system::sound_system
+system_alsa	include/sound_system/system_alsa.h	/^class system_alsa :public A_system$/;"	c
+system_alsa	src/sound_system/system_alsa.cpp	/^system_alsa::system_alsa(): $/;"	f	class:system_alsa
+system_alsa	src/sound_system/system_alsa.cpp	/^system_alsa::system_alsa(system_mode_t mode):$/;"	f	class:system_alsa
+system_alsa	src/sound_system/system_alsa.cpp	/^system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)$/;"	f	class:system_alsa
+system_jack	include/sound_system/system_jack.h	/^class system_jack : public A_system$/;"	c
+system_jack	src/sound_system/system_jack.cpp	/^system_jack::system_jack(): $/;"	f	class:system_jack
+system_jack	src/sound_system/system_jack.cpp	/^system_jack::system_jack(system_mode_t mode){$/;"	f	class:system_jack
+system_mode_t	include/sound_system/system.h	/^typedef int system_mode_t;$/;"	t
+system_parameters	include/sound_system/system.h	/^class system_parameters {$/;"	c
+system_parameters	src/sound_system/system.cpp	/^system_parameters::system_parameters()$/;"	f	class:system_parameters
+type	include/sound_system/sound_system.h	/^			s_system_t type;$/;"	m	class:Sound_system::sound_system
+valid_rates	include/sound_system/system.h	/^		unsigned int * valid_rates;$/;"	m	class:system_parameters
+value_in_array	include/util/array.h	/^inline bool value_in_array(T value, T * array, int size)$/;"	f
+~A_system	include/sound_system/system.h	/^	virtual ~A_system(){}$/;"	f	class:A_system
+~Recorder	src/sound_system/recorder.cpp	/^Recorder::~Recorder() {}$/;"	f	class:Recorder
+~Recorder_Alsa	src/sound_system/recorder_alsa.cpp	/^Recorder_Alsa::~Recorder_Alsa() {$/;"	f	class:Recorder_Alsa
+~sound_system	src/sound_system/sound_system.cpp	/^sound_system::~sound_system() {$/;"	f	class:sound_system
+~system_alsa	src/sound_system/system_alsa.cpp	/^system_alsa::~system_alsa(){$/;"	f	class:system_alsa
+~system_jack	src/sound_system/system_jack.cpp	/^system_jack::~system_jack(){$/;"	f	class:system_jack
+~system_parameters	src/sound_system/system.cpp	/^system_parameters::~system_parameters() $/;"	f	class:system_parameters

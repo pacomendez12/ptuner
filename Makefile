@@ -14,6 +14,8 @@ system: $(SRC)
 #$(GCC) -o $@ $^ -Iinclude/ $(FLAGS) $(LIBS)
 	$(GCC) -c $^ -Iinclude/ $(FLAGS) $(LIBS)
 
+gui:
+	g++ src/gui/main_app.cpp -o gui `pkg-config gtkmm-3.0 --cflags --libs`
 
 clean:
 	rm -f *.o main

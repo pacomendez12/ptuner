@@ -1,7 +1,7 @@
 GCC=g++
 LIBS=-lasound
-FLAGS=-std=c++11 -fPIC
-FLAGS_BIN=-std=c++11
+FLAGS=-std=c++11 -fPIC -ggdb
+FLAGS_BIN=-std=c++11 -ggdb
 
 SRC=$(wildcard src/sound_system/*.cpp) $(wildcard src/util/*.cpp)
 #SRC=$(wildcard src/sound_system/*.cpp) 

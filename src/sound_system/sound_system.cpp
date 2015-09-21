@@ -17,6 +17,10 @@ sound_system::sound_system(s_system_t type){
 }
 
 sound_system::~sound_system() {
+	if (system_ != NULL) {
+		system_->stop();
+		delete system_;
+	}
 }
 
 void

@@ -18,6 +18,7 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 {
 	slog(ALSA_TAG, "System Alsa constructor, with mode = %d, and buffer size=%d",
 			mode, size);
+	buffer = NULL;
 	status = STOPPED;
 	parameters.buffer_size = size;
 
@@ -35,14 +36,10 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 	}
 #endif
 	
-	parameters.buffer = NULL;
-	parameters.capture_handle = NULL;
-	parameters.hw_params = NULL;
-
-	/* FIXME i'm using dafault name only for test purposes */
+	/* FIXME i'm using dafault name only for testing purposes */
 	strncpy(parameters.card_name, "default", CARD_NAME_SIZE);
-	parameters.buffer = new (std::nothrow) buffer_data_t[parameters.buffer_size];
-	if(parameters.buffer == NULL){
+	buffer = new (std::nothrow) buffer_data_t[parameters.buffer_size];
+	if(buffer == NULL){
 		exit(1);
 	}
 
@@ -50,7 +47,7 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 	parameters.set_number_channels(ALSA_DEFAULT_NUMBER_CHANNELS);
 	int array_size = ARRAY_SIZE(alsa_valid_rates);
 	parameters.set_valid_rates_array(alsa_valid_rates, array_size); 
-	slog(ALSA_TAG, "alsa_valid_rates has %d elements", array_size);
+	slog(ALSA_TAG, "alsa_valid_rates has %d elements", parameters.size_valid_rates);
 	parameters.set_rate(ALSA_DEFAULT_RATES);
 	/*TODO set rate and depth */ 
 
@@ -59,7 +56,13 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 }
 
 system_alsa::~system_alsa(){
-	finish_system();
+	slog(ALSA_TAG, "Starting destructor of system_alsa");
+	if (buffer != NULL) {
+		slog(ALSA_TAG, "buffer is different of NULL");
+		delete [] buffer;
+		buffer = NULL;
+	}
+	//finish_system();
 }
 
 int
@@ -69,7 +72,7 @@ system_alsa::init_system(){
 	slog(ALSA_TAG, "Starting alsa sound system");
 
 	/*FIXME it's not working on both sides, record and capture */
-	if((err = snd_pcm_open(&parameters.capture_handle, parameters.card_name, 
+	if((err = snd_pcm_open(&(parameters).capture_handle, parameters.card_name, 
 					SND_PCM_STREAM_CAPTURE, 0)) < 0){
 		slog(ALSA_TAG, "Cannot open audio device %s (%s)", 
 				parameters.card_name, snd_strerror(err));
@@ -118,24 +121,29 @@ system_alsa::init_system(){
 		exit(1);
 	}
 
-	snd_pcm_hw_params_free(parameters.hw_params);
+	//snd_pcm_hw_params_free(parameters.hw_params);
 
 	if((err = snd_pcm_prepare(parameters.capture_handle)) < 0){
 		fprintf(stderr, "Cannot prepare audio interface for use (%s)", snd_strerror(err));
 		exit(1);
 	}
 
+	short buff[128];
+	
 	int i;
-	for(i = 0; i < 10; ++i){
-		if((err = snd_pcm_readi(parameters.capture_handle, 
-						parameters.buffer, parameters.buffer_size)) != parameters.buffer_size){
-			fprintf(stderr, "Write to audio interface failed (%s) err = %d", snd_strerror(err), err);
-			exit(1);
-		} else {
-			slog(ALSA_TAG, "Read well %d bytes", err);
-		}
-	}
+		err = snd_pcm_readi(parameters.capture_handle, buff, 128);
+	//for(i = 0; i < 10; ++i){
+		//if((err = snd_pcm_readi(parameters.capture_handle, 
+		//				buff, 128)) != 128){
+		//	fprintf(stderr, "Write to audio interface failed (%s) err = %d", snd_strerror(err), err);
+		//	exit(1);
+		//} else {
+			//slog(ALSA_TAG, "Read well %d bytes", err);
+	//	}
+	//slog(ALSA_TAG, "size = %d bytes", parameters.buffer_size);
+	//}
 
+	//snd_pcm_close(parameters.capture_handle);
 }
 
 result_t
@@ -152,6 +160,7 @@ system_alsa::record() {}
 void
 system_alsa::finish_system(){
 	/*We need to stop every transaction yet alive*/
+#if 0
 	switch (status) {
 		case PLAYING:
 			player->stop();
@@ -172,6 +181,20 @@ system_alsa::finish_system(){
 
 /*	if ( player != NULL)
 		delete player;*/
-	snd_pcm_close(parameters.capture_handle);
+#endif
 	
+}
+
+
+/* alsa_system_parameters methods */
+
+alsa_system_parameters::alsa_system_parameters() : system_parameters() {
+	capture_handle = NULL;
+	hw_params = NULL;
+	slog(ALSA_TAG, "Calling constructor from alsa_system_parameters");
+}
+
+
+alsa_system_parameters::~alsa_system_parameters() {
+	slog(ALSA_TAG, "Calling destructor from alsa_system_parameters");
 }

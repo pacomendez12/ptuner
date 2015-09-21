@@ -9,6 +9,7 @@
 #include "recorder.h"
 #include "player.h"
 #include "definitions.h"
+#include "logger.h"
 
 #define SYSTEM_PLAYER 1
 #define SYSTEM_RECORDER 2
@@ -20,6 +21,7 @@
 
 #define DEFAULT_RATE 44100
 
+#define SYSTEM_TAG "SYSTEM"
 
 typedef int system_mode_t;
 
@@ -27,9 +29,10 @@ typedef short buffer_data_t;
 
 typedef int buffer_size_t;
 
-class A_system {
+class A_system : public Logger{
 public:
-	virtual ~A_system(){}
+	A_system();
+	virtual ~A_system();
 
 	/*The most abstract methods*/
 	virtual result_t play() = 0;
@@ -39,8 +42,6 @@ public:
 	// void setParameters(int rate, int depth);
 
 
-	/* method for logging the system */
-	void slog(const char * tag, const char *fmt, ...);
 
 
 protected:
@@ -50,25 +51,14 @@ protected:
 
 	
 	status_t status;
-	
-	void set_number_channels(unsigned int);
-	void set_rate(unsigned int);
-	void set_depth(unsigned int);
-
-	unsigned int get_number_channels();
-	unsigned int get_rate();
-	unsigned int get_depth();
-
-
-	void set_valid_rates_array(const unsigned int *, int size);
+	buffer_data_t * buffer;
 };
 
 
-class system_parameters {
+class system_parameters : public Logger{
 
 	public:
 		int buffer_size;
-		buffer_data_t * buffer;
 		unsigned int rate;
 		unsigned int channels;
 		unsigned int * valid_rates;
@@ -76,7 +66,7 @@ class system_parameters {
 		unsigned int depth;
 
 		system_parameters();
-		~system_parameters();
+		virtual ~system_parameters();
 
 
 		void set_number_channels(unsigned int n_channels);

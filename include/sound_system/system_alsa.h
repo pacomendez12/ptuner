@@ -29,6 +29,8 @@
 class alsa_system_parameters : public system_parameters {
 
 public:
+	alsa_system_parameters();
+	~alsa_system_parameters();
 	snd_pcm_t * playback_handle;
 	snd_pcm_t * capture_handle;
 	snd_pcm_hw_params_t * hw_params;

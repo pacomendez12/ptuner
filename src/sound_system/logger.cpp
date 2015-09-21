@@ -2,7 +2,7 @@
 
 /* The first idea of how to implement a logger system */
 void
-A_system::slog(const char * tag, const char * fmt, ...)
+Logger::slog(const char * tag, const char * fmt, ...)
 {
 	char final_tag[225];
 

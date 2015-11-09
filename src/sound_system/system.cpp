@@ -7,26 +7,28 @@
 A_system::A_system() {
 	recorder = NULL;
 	player = NULL;
+	buffer = NULL;
 }
 
 A_system::~A_system() {
-	/*if (recorder != NULL) {
-		//delete recorder;
+	slog(SYSTEM_TAG, "Calling A_system class destructor, recorder and player");
+	if (recorder != NULL) {
+		delete recorder;
 		recorder = NULL;
 	}
 
 	if (player != NULL) {
-		//delete player;
+		delete player;
 		player = NULL;
-	}*/
+	}
 }
 
 system_parameters::~system_parameters() 
 {
 	if (valid_rates != NULL) {
 		slog(SYSTEM_TAG, "Calling destructor from system_parameters");
-		//delete [] valid_rates;
-		//valid_rates = NULL;
+		delete [] valid_rates;
+		valid_rates = NULL;
 		size_valid_rates = 0;
 	}
 }

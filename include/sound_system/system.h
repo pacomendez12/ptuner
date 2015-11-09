@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <util/array.h>
+#include <thread>
+#include <unistd.h>
 #include "recorder.h"
 #include "player.h"
 #include "definitions.h"
@@ -25,7 +27,8 @@
 
 typedef int system_mode_t;
 
-typedef short buffer_data_t;
+//typedef char buffer_data_t;
+typedef int16_t buffer_data_t;
 
 typedef int buffer_size_t;
 

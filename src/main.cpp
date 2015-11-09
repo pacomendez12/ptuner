@@ -9,5 +9,6 @@ int main(int argc, char * argv[])
 
 	printf("size of array %lu\n", ARRAY_SIZE(p));*/
 	Sound_system::sound_system sound_sys;
+	sound_sys.record();
 	return 0;
 }

@@ -1,4 +1,5 @@
 #include <sound_system/system.h>
+#include <sound_system/logger.h>
 
 /* The first idea of how to implement a logger system */
 void

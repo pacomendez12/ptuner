@@ -6,9 +6,10 @@
 #include "definitions.h"
 #include "system_alsa.h"
 #include "system_jack.h"
+#include "logger.h"
 
 namespace Sound_system{
-	class sound_system {
+	class sound_system : public Logger{
 		private:
 			s_system_t type;
 			A_system * system_;

@@ -9,16 +9,20 @@
 #include "recorder.h"
 #include <alsa/asoundlib.h>
 
-class Recorder_Alsa : Recorder{
+/*opaque class*/
+class system_alsa;
+
+class Recorder_Alsa : public Recorder{
 	public:
 		Recorder_Alsa();
-		Recorder_Alsa(int rate, int depth);
+		Recorder_Alsa(system_alsa *);
 		/*Destructor is called when the tuner finish or when is 
 		 * changed the sound system.
 		 **/
 		~Recorder_Alsa();
-		int getStream(void * buff, int size);
+		result_t getStream(void * buff, int size);
 		void stop();
+		void start();
 
 		/*FIXME: I'm not sure now if the next methods will be part
 		 * of this class
@@ -26,6 +30,9 @@ class Recorder_Alsa : Recorder{
 
 		/*virtual int initSoundSystem() = 0;
 		virtual int finishSoundSystem() = 0;*/
+
+		private:
+		system_alsa * saptr;
 };
 
 #endif

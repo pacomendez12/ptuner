@@ -7,6 +7,7 @@
  * is using, in fact I want it to support JACK too at least.
  */
 using namespace Sound_system;
+#define TAG "SOUND_SYSTEM"
 
 sound_system::sound_system(): sound_system(DEFAULT_SOUND_SYSTEM){}
 
@@ -17,8 +18,8 @@ sound_system::sound_system(s_system_t type){
 }
 
 sound_system::~sound_system() {
+	slog(TAG, "Calling sound_system destructor");
 	if (system_ != NULL) {
-		system_->stop();
 		delete system_;
 	}
 }

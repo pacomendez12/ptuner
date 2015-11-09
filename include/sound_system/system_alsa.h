@@ -7,6 +7,7 @@
 #include <new>
 #include <alsa/asoundlib.h>
 #include "system.h"
+#include "recorder_alsa.h"
 
 
 /* This flag will be used to define what flags are we going to use */
@@ -34,6 +35,7 @@ public:
 	snd_pcm_t * playback_handle;
 	snd_pcm_t * capture_handle;
 	snd_pcm_hw_params_t * hw_params;
+	snd_pcm_format_t format;
 
 	char card_name[CARD_NAME_SIZE];
 };
@@ -41,6 +43,8 @@ public:
 
 class system_alsa :public A_system
  {
+	 friend class Recorder_Alsa;
+
 public:
 	system_alsa();
 	system_alsa(system_mode_t mode);

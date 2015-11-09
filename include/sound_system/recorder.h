@@ -22,10 +22,9 @@ class Recorder{
 		void virtual stop() = 0;
 		inline status_t getStatus() { return status;}
 
-	private:
-	std::thread * thread_capture;
 
 	protected:
+	std::thread * thread_capture;
 	status_t status;
 
 };

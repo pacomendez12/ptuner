@@ -33,6 +33,10 @@ class Recorder_Alsa : public Recorder{
 
 		private:
 		system_alsa * saptr;
+
+
+		/* private methods */
+		void get_data_from_alsa();
 };
 
 #endif

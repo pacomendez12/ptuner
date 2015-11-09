@@ -10,5 +10,8 @@ int main(int argc, char * argv[])
 	printf("size of array %lu\n", ARRAY_SIZE(p));*/
 	Sound_system::sound_system sound_sys;
 	sound_sys.record();
+	/* sleep main thread to read 2 seconds */
+	sleep(2);
+	sound_sys.stop();
 	return 0;
 }

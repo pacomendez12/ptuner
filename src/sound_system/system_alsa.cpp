@@ -71,7 +71,7 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 	/*creating player and recording */
 	recorder = new Recorder_Alsa(this);
 	/* test for recording */
-	recorder->getStream(NULL,0);
+	//recorder->getStream(NULL,0);
 }
 
 system_alsa::~system_alsa(){

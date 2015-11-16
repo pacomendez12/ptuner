@@ -23,6 +23,13 @@ A_system::~A_system() {
 	}
 }
 
+
+void
+A_system::
+setCallback(void (*callback)(double * buffer, int buffer_size, void * arg)) {
+	this->callback = callback;
+}
+
 system_parameters::~system_parameters() 
 {
 	if (valid_rates != NULL) {

@@ -47,7 +47,13 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 	//			snd_pcm_format_width(parameters.format) / 8 * 2];
 	buffer = new (std::nothrow) buffer_data_t[parameters.buffer_size * 
 				sizeof(buffer_data_t) * parameters.channels];
+	
+	float_buffer = new (std::nothrow) buffer_data_float_t[parameters.buffer_size * 
+				sizeof(buffer_data_t) * parameters.channels];
+
 	memset(buffer, 0, parameters.buffer_size * sizeof(buffer_data_t) *
+		   	parameters.channels);
+	memset(float_buffer, 0, parameters.buffer_size * sizeof(buffer_data_float_t) *
 		   	parameters.channels);
 	if(buffer == NULL){
 		slog(ALSA_TAG, "ENOMEM: there is no memory to reserve buffer");

@@ -3,7 +3,7 @@
  * in a subclass because it's dependent of the system used for 
  * capturing sound
  */
-
+#include <mutex>
 #include "system.h"
 #include "definitions.h"
 
@@ -26,6 +26,7 @@ class Recorder{
 	protected:
 	std::thread * thread_capture;
 	status_t status;
+	std::mutex capture_thread_mutex;
 
 };
 

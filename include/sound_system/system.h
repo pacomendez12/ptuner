@@ -30,6 +30,8 @@ typedef int system_mode_t;
 //typedef char buffer_data_t;
 typedef int16_t buffer_data_t;
 
+typedef double buffer_data_float_t;
+
 typedef int buffer_size_t;
 
 class A_system : public Logger{
@@ -44,7 +46,10 @@ public:
 
 	// void setParameters(int rate, int depth);
 
+	//callback from sound_system
+	void (* callback)(double * buffer, int buffer_size, void * arg);
 
+	void setCallback(void (*callback)(double * buffer, int buffer_size, void *arg));
 
 
 protected:
@@ -55,6 +60,8 @@ protected:
 	
 	status_t status;
 	buffer_data_t * buffer;
+	buffer_data_float_t * float_buffer;
+
 };
 
 

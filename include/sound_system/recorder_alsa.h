@@ -14,7 +14,6 @@ class system_alsa;
 
 class Recorder_Alsa : public Recorder{
 	public:
-		Recorder_Alsa();
 		Recorder_Alsa(system_alsa *);
 		/*Destructor is called when the tuner finish or when is 
 		 * changed the sound system.
@@ -33,7 +32,6 @@ class Recorder_Alsa : public Recorder{
 
 		private:
 		system_alsa * saptr;
-
 
 		/* private methods */
 		void get_data_from_alsa();

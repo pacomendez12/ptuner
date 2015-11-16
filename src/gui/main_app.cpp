@@ -1,6 +1,7 @@
 #include <ptuner_window.h>
 #include <iostream>
 
+#define TAG "MAIN_WINDOW"
 
 Main_window::Main_window()
 : m_button("This is a button"), m_box(Gtk::ORIENTATION_VERTICAL)
@@ -52,7 +53,16 @@ int main(int argc, char * argv[])
 	Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, 
 			"org.paco.ptuner");
 
+	Main_window mw;
+
+	auto refBuilder = Gtk::Builder.create();
+	try {
+		refBuilder.add_from_file("./data/ptuner_main_window.glade");
+	} catch (const Glib::FileError &ex) {
+		mw.l.slog(TAG, "%s", ex.what());
+	} catch (const Glib::MarkupError &ex) {
+		mw.l.slog(TAG, "%s", ex.what());
+	}
 	
-	Main_window window;
 	return app->run(window);
 }

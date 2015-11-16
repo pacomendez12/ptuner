@@ -2,6 +2,11 @@
 #include <util/array.h>
 
 
+
+void cback(double * buffer, int buffer_size, void * arg) {
+	std::cout << "Receiving " << buffer_size << " bytes from sound system" << std::endl;
+}
+
 int main(int argc, char * argv[])
 {
 	/*int arr[] = {1,2,3,4,5,6,7,8,9};
@@ -9,6 +14,7 @@ int main(int argc, char * argv[])
 
 	printf("size of array %lu\n", ARRAY_SIZE(p));*/
 	Sound_system::sound_system sound_sys;
+	sound_sys.setCallback(cback);
 	sound_sys.record();
 	/* sleep main thread to read 2 seconds */
 	sleep(2);

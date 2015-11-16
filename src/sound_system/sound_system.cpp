@@ -9,12 +9,18 @@
 using namespace Sound_system;
 #define TAG "SOUND_SYSTEM"
 
-sound_system::sound_system(): sound_system(DEFAULT_SOUND_SYSTEM){}
+sound_system::sound_system(): sound_system(DEFAULT_SOUND_SYSTEM, NULL){}
 
-sound_system::sound_system(s_system_t type){
+sound_system::sound_system(s_system_t type, void (*callback)(double * buffer,
+			int buffer_size, void * arg)){
 	this->type = NONE;
 	system_ = NULL;
+	this->callback = callback;
 	select_sound_system(type);
+
+	if (system_) {
+		system_->setCallback(this->callback);
+	}
 }
 
 sound_system::~sound_system() {
@@ -23,6 +29,16 @@ sound_system::~sound_system() {
 		delete system_;
 	}
 }
+
+void
+sound_system::
+setCallback(void (*callback)(double * buffer, int buffer_size, void * arg)) {
+	this->callback = callback;
+	if (system_) {
+		system_->setCallback(this->callback);
+	}
+}
+
 
 void
 sound_system::select_sound_system(s_system_t type){

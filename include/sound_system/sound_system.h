@@ -17,16 +17,20 @@ namespace Sound_system{
 			/*private methods*/
 			void select_sound_system(s_system_t);
 
+			//callback
+			void (* callback)(double * buffer, int buffer_size, void * arg);
 		public:
 			sound_system();
-			sound_system(s_system_t);
+			sound_system(s_system_t, void (*callback)(double * buffer,
+						int buffer_size, void * arg));
 			~sound_system();
 
 			result_t play();
 			result_t stop();
 			result_t record();
 
-
+			void setCallback(void (*callback)(double * buffer, int buffer_size, 
+						void *arg));
 	};
 
 }

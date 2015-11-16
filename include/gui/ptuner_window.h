@@ -3,12 +3,15 @@
 #define PTUNER_WINDOW_H
 
 #include <gtkmm.h>
+#include <sound_system/logger.h>
 
 class Main_window : public Gtk::Window
 {
 	public:
 		Main_window();
 		~Main_window();
+
+		Logger l;
 
 	protected:
 		void on_button_clicked();

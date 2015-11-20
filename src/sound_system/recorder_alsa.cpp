@@ -67,6 +67,7 @@ Recorder_Alsa::get_data_from_alsa()
 		//saptr->slog(TAG, "size = %d bytes", saptr->parameters.buffer_size);
 
 		//copying data to double array
+		
 		for (int i = 0; i < saptr->parameters.buffer_size; i++) {
 			saptr->float_buffer[i] = (double) saptr->buffer[i];
 		}

@@ -6,6 +6,10 @@
 
 void cback(double * buffer, int buffer_size, void * arg) {
 	std::cout << "Receiving " << buffer_size << " bytes from sound system" << std::endl;
+	for (int i = 0; i < buffer_size; i++) {
+		std::cout << buffer[i] <<" ";
+	}
+	std::cout << std::endl;
 }
 
 int main(int argc, char * argv[])

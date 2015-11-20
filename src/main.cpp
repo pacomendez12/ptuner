@@ -1,5 +1,6 @@
 #include <sound_system/sound_system.h>
 #include <util/array.h>
+#include <util/complex.h>
 
 
 int main(int argc, char * argv[])
@@ -13,5 +14,11 @@ int main(int argc, char * argv[])
 	/* sleep main thread to read 2 seconds */
 	sleep(2);
 	sound_sys.stop();
+	complex x(5, 6);
+	complex y(10, 3);
+	complex z;
+
+	z = x + y;
+	std::cout << z.toString();
 	return 0;
 }

@@ -86,6 +86,8 @@ system_alsa::~system_alsa(){
 	if (buffer != NULL) {
 		delete [] buffer;
 		buffer = NULL;
+		delete [] float_buffer;
+		float_buffer = NULL;
 		/*close have to be after delete of buffer it is a must */
 		snd_pcm_close(parameters.capture_handle);
 	}

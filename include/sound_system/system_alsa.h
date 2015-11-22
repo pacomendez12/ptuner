@@ -19,6 +19,9 @@
 /* Defines the default buffer size for ALSA */
 #define ALSA_DEFAULT_BUFFER_SIZE 256
 
+/* Defines de default size of buffer data to be sent to fft */
+#define ALSA_DEFAULT_BUFFER_PROCESSABLE_SIZE 16384
+
 /* Default number of channels */
 #define ALSA_DEFAULT_NUMBER_CHANNELS 2
 
@@ -71,7 +74,7 @@ private:
 };
 
 	/* TODO try to keep this value inside the class */
-	const static unsigned int alsa_valid_rates[] = { 44100 };
+	const static unsigned int alsa_valid_rates[] = { 8000, 11025, 22050, 44100, 48000 };
 
 //constexpr const unsigned int system_alsa::alsa_valid_rates[1];
 #endif /* end of include guard: SYSTEM_H */

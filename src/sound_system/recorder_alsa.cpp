@@ -1,3 +1,4 @@
+#include <limits>
 #include <sound_system/recorder_alsa.h>
 #include <sound_system/system_alsa.h>
 #include <sound_system/logger.h>
@@ -69,7 +70,8 @@ Recorder_Alsa::get_data_from_alsa()
 		//copying data to double array
 		
 		for (int i = 0; i < saptr->parameters.buffer_size; i++) {
-			saptr->float_buffer[i] = (double) saptr->buffer[i];
+			saptr->float_buffer[i] = (double) saptr->buffer[i] / 
+				std::numeric_limits<buffer_data_t>::max();
 		}
 
 		//call callback over sound_system

@@ -8,6 +8,7 @@
 #include "system_jack.h"
 #include "logger.h"
 
+
 namespace Sound_system{
 	class sound_system : public Logger{
 		private:
@@ -15,7 +16,6 @@ namespace Sound_system{
 			A_system * system_;
 
 			/*private methods*/
-			void select_sound_system(s_system_t);
 
 			//callback
 			void (* callback)(double * buffer, int buffer_size, void * arg);
@@ -31,6 +31,7 @@ namespace Sound_system{
 
 			void setCallback(void (*callback)(double * buffer, int buffer_size, 
 						void *arg));
+			void select_sound_system(s_system_t);
 	};
 
 }

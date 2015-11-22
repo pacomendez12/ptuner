@@ -13,6 +13,7 @@
 #include "definitions.h"
 #include "logger.h"
 
+
 #define SYSTEM_PLAYER 1
 #define SYSTEM_RECORDER 2
 

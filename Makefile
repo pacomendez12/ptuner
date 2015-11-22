@@ -4,7 +4,7 @@ FLAGS=-std=c++11 -fPIC -ggdb
 FLAGS_BIN=-std=c++11 -ggdb
 
 
-SRC=$(wildcard src/sound_system/*.cpp) $(wildcard src/util/*.cpp)
+SRC=$(wildcard src/sound_system/*.cpp) $(wildcard src/util/*.cpp $(wildcard src/tuner/*.cpp))
 GUI_SRC=$(wildcard src/gui/*.cpp)
 #SRC=$(wildcard src/sound_system/*.cpp) 
 OBJ=$(wildcard ./*.o)

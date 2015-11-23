@@ -35,6 +35,9 @@ typedef double buffer_data_float_t;
 
 typedef int buffer_size_t;
 
+class system_parameters;
+
+
 class A_system : public Logger{
 public:
 	A_system();
@@ -44,6 +47,9 @@ public:
 	virtual result_t play() = 0;
 	virtual result_t stop() = 0;
 	virtual result_t record() = 0;
+
+	/* ptr must be assigned by the specific system_parameter */
+	system_parameters const* parametersPtr;
 
 	// void setParameters(int rate, int depth);
 
@@ -62,6 +68,7 @@ protected:
 	status_t status;
 	buffer_data_t * buffer;
 	buffer_data_float_t * float_buffer;
+
 
 };
 

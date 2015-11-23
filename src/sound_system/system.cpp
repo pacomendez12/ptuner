@@ -8,6 +8,7 @@ A_system::A_system() {
 	recorder = NULL;
 	player = NULL;
 	buffer = NULL;
+	parametersPtr = NULL;
 }
 
 A_system::~A_system() {

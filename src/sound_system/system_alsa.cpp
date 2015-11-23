@@ -19,6 +19,7 @@ system_alsa::system_alsa(system_mode_t mode, buffer_size_t size)
 {
 	slog(ALSA_TAG, "System Alsa constructor, with mode = %d, and buffer size=%d",
 			mode, size);
+	parametersPtr = &parameters;
 	buffer = NULL;
 	status = STOPPED;
 	parameters.buffer_size = size;

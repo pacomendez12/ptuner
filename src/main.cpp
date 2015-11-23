@@ -4,15 +4,6 @@
 #include <tuner/tuner.h>
 
 
-
-void cback(double * buffer, int buffer_size, void * arg) {
-	std::cout << "Receiving " << buffer_size << " bytes from sound system" << std::endl;
-	for (int i = 0; i < buffer_size; i++) {
-		std::cout << buffer[i] <<" ";
-	}
-	std::cout << std::endl;
-}
-
 int main(int argc, char * argv[])
 {
 	/*int arr[] = {1,2,3,4,5,6,7,8,9};
@@ -31,7 +22,8 @@ int main(int argc, char * argv[])
 
 	//z = x + y;
 	//std::cout << z.toString();
-	Tuner t;
+	Tuner tuner;
+	tuner.startTuning();
 	sleep(2);
 	return 0;
 }

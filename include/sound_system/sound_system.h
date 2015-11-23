@@ -32,6 +32,16 @@ namespace Sound_system{
 			void setCallback(void (*callback)(double * buffer, int buffer_size, 
 						void *arg));
 			void select_sound_system(s_system_t);
+
+
+			/* export enter to parameters */ /*not used yet*/
+			void setSystemParameters(system_parameters & sp);
+			//system_parameters getSystemParameters();
+			//
+
+			int getSampleRate();
+			int getSoundSystemBufferSize();
+
 	};
 
 }

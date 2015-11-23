@@ -19,9 +19,6 @@
 /* Defines the default buffer size for ALSA */
 #define ALSA_DEFAULT_BUFFER_SIZE 256
 
-/* Defines de default size of buffer data to be sent to fft */
-#define ALSA_DEFAULT_BUFFER_PROCESSABLE_SIZE 16384
-
 /* Default number of channels */
 #define ALSA_DEFAULT_NUMBER_CHANNELS 2
 

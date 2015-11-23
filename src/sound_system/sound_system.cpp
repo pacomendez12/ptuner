@@ -89,3 +89,27 @@ sound_system::record(){
 	assert(system_ != NULL);
 	return system_->record();
 }
+
+
+
+void 
+sound_system::setSystemParameters(system_parameters &sp)
+{
+
+}
+
+int 
+sound_system::getSampleRate()
+{
+	if (system_ != NULL) {
+		return system_->parametersPtr->rate;
+	}
+}
+
+int 
+sound_system::getSoundSystemBufferSize()
+{
+	if (system_ != NULL) {
+		return system_->parametersPtr->buffer_size;
+	}
+}

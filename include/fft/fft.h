@@ -1,11 +1,10 @@
 #ifndef FFT_H
-
 #define FFT_H
+#include <util/complex.h>
 
 class Fft {
-
-	void fft(complex * data, int n);
-
+	public:
+	static void fft(complex * data, int n);
 };
 
 

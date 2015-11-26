@@ -5,6 +5,9 @@
 
 #define TAG "RECORDER_ALSA"
 
+/* uncomment if you want values between 0.0 and 1.0 */
+//#define ONE_AS_LIMIT_VALUE_CAPTURE
+
 /*CD quality for rate frame 
  * 24 bits of depth*/
 Recorder_Alsa::Recorder_Alsa(system_alsa * saptr) 
@@ -18,10 +21,10 @@ Recorder_Alsa::~Recorder_Alsa()
 }
 
 
+/* maybe it will not be used mark as deprecated */
 result_t
 Recorder_Alsa::getStream(void * buff, int size) 
 {
-	
 	return OK_RESULT;
 }
 
@@ -70,8 +73,12 @@ Recorder_Alsa::get_data_from_alsa()
 		//copying data to double array
 		
 		for (int i = 0; i < saptr->parameters.buffer_size; i++) {
+#ifdef ONE_AS_LIMIT_VALUE_CAPTURE
 			saptr->float_buffer[i] = (double) saptr->buffer[i] / 
 				std::numeric_limits<buffer_data_t>::max();
+#else
+			saptr->float_buffer[i] = (double) saptr->buffer[i];
+#endif
 		}
 
 		//call callback over sound_system

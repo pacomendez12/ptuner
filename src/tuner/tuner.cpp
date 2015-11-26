@@ -1,5 +1,6 @@
 #include <tuner/tuner.h>
 #include <tuner/filter.h>
+#include <fft/fft.h>
 
 static Tuner * tunerPtr;
 
@@ -44,7 +45,43 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 		complex_buffer[i].setReal(buffer[i] / normalization * hanWindow[i]);
 	}
 
+	/* calculatin Fourier transform */
+	Fft::fft(complex_buffer, TUNER_SAMPLES);
 
+	/* post processing fft */
+
+	/* valida data from fft are in the size of 0 - buffer length * 3 / 8 */
+	const int output_buffer_size = TUNER_SAMPLES * 3 / 8;
+
+	double xa[output_buffer_size];
+	double xp[output_buffer_size];
+	double xf[output_buffer_size];
+	double dx[output_buffer_size];
+	double expected = M_PI * 2.0 * (double)data_size / TUNER_SAMPLES;
+
+	for (int i = 1; i < output_buffer_size; i++) {
+		double real = complex_buffer[i].real;
+		double imag = complex_buffer[i].imag;
+		xa[i] = hypot(real, imag);
+
+		/* calculing frequency */
+		double p = atan2(imag, real);
+
+		double dp = xp[i] - p;
+		xp[i] = p;
+
+		dp -= (double)i * expected;
+
+		int qpd = dp / M_PI;
+
+		if (qpd >= 0) {
+			qpd += qpd & 1;
+		} else {
+			qpd -= qpd & 1;
+		}
+
+		dp -= M_PI * (double)qpd;
+	}
 
 	bool well = true;
 	std::cout << "Receiving " << data_size << " bytes from sound system" << std::endl;

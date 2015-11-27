@@ -1,6 +1,7 @@
 #include <tuner/tuner.h>
 #include <tuner/filter.h>
 #include <fft/fft.h>
+#include <util/array.h>
 
 static Tuner * tunerPtr;
 
@@ -24,7 +25,7 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 	if (useFilter && filter == BUTTERWORTH) {
 		Filter::Butterworth(data, data_size, buffer, TUNER_SAMPLES);
 	} else {
-		memcpy(buffer + size_data_keept / sizeof(double), data, data_size 
+		memcpy(buffer + size_data_keept / sizeof(double), data, data_size
 				* sizeof(double));
 	}
 
@@ -49,18 +50,30 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 	Fft::fft(complex_buffer, TUNER_SAMPLES);
 
 	/* post processing fft */
+	postFftProccess(complex_buffer, data_size);
 
-	/* valida data from fft are in the size of 0 - buffer length * 3 / 8 */
-	const int output_buffer_size = TUNER_SAMPLES * 3 / 8;
+	/* down sampling */
+	if (downsample)
+		downSampling();
+
+	for (int i = 0; i < OUTPUT_BUFFER_SIZE; i++) {
+		//std::cout << dx[i] <<" ";
+		/*if (data[i] != buffer[size_data_keept / sizeof(double) + i]) {
+			well = false;
+			break;
+		}*/
+	}
+	//std::cout << std::endl;
+
+}
 
 
-	double xa[output_buffer_size];
-	double xp[output_buffer_size];
-	double xf[output_buffer_size];
-	double dx[output_buffer_size];
-	double expected = M_PI * 2.0 * (double)data_size / TUNER_SAMPLES;
+void
+Tuner::postFftProccess(complex * complex_buffer, int data_read)
+{
+	double expected = M_PI * 2.0 * (double)data_read / TUNER_SAMPLES;
 
-	for (int i = 1; i < output_buffer_size; i++) {
+	for (int i = 1; i < OUTPUT_BUFFER_SIZE; i++) {
 		double real = complex_buffer[i].real;
 		double imag = complex_buffer[i].imag;
 
@@ -83,20 +96,42 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 		}
 
 		dp -= M_PI * (double)qpd;
-	}
 
-	bool well = true;
-	std::cout << "Receiving " << data_size << " bytes from sound system" << std::endl;
-	for (int i = 0; i < data_size; i++) {
-		std::cout << data[i] <<" ";
-		/*if (data[i] != buffer[size_data_keept / sizeof(double) + i]) {
-			well = false;
-			break;
-		}*/
-	}
-	//std::cout << well << std::endl;
-	std::cout << std::endl;
 
+		double df =  oversampling * dp / (2.0 * M_PI);
+
+
+		xf[i] = (i * fps + df * fps);
+
+		dx[i] = xa[i] - xa[i - 1];
+	}
+}
+
+
+void
+Tuner::downSampling()
+{
+	/* all work is done based on members bufers x2, x3, x4, x5 */
+	DOWNSAMPLING_METHOD(2); 
+	DOWNSAMPLING_METHOD(3);
+	DOWNSAMPLING_METHOD(4);
+	DOWNSAMPLING_METHOD(5);
+
+	for (int i = 1; i < ARRAY_SIZE(xa); i++) {
+		if (i < ARRAY_SIZE(x2))
+			xa[i] += x2[i];
+
+		if (i < ARRAY_SIZE(x3))
+			xa[i] += x3[i];
+
+		if (i < ARRAY_SIZE(x4))
+			xa[i] += x4[i];
+
+		if (i < ARRAY_SIZE(x5))
+			xa[i] += x5[i];
+
+		dx[i] = xa[i] - xa[i - 1];
+	}
 }
 
 
@@ -107,11 +142,15 @@ Tuner::Tuner(s_system_t sst)
 {
 	sound_system_type = sst;
 	sound = new sound_system(sst, callback);
-//	sound.select_sound_system(sst);
-//	sound.setCallback(callback);
+
 	/* get real values from sound system */
 	sound_system_buffer_size = sound->getSoundSystemBufferSize();
 	sample_rate = sound->getSampleRate();
+	fps = sample_rate / TUNER_SAMPLES;
+	oversampling = DEFAULT_OVERSAMPLING; // we need to use a variable here;
+	peak_number = 3;
+	downsample = DEFAULT_DOWNSAMPLE;
+	dmax = 0;
 
 
 	/* enable filter by default */
@@ -125,8 +164,6 @@ Tuner::Tuner(s_system_t sst)
 		hanWindow[i] = 0.5 * (1 - cos(2 * M_PI * i / (TUNER_SAMPLES - 1.0)));
 	}
 
-	dmax = 0;
-	
 	/* global Tuner ptr have to be able to call the 
 	 * tuner object callbackData */
 	tunerPtr = this;

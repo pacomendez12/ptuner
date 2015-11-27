@@ -53,6 +53,7 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 	/* valida data from fft are in the size of 0 - buffer length * 3 / 8 */
 	const int output_buffer_size = TUNER_SAMPLES * 3 / 8;
 
+
 	double xa[output_buffer_size];
 	double xp[output_buffer_size];
 	double xf[output_buffer_size];
@@ -62,6 +63,7 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 	for (int i = 1; i < output_buffer_size; i++) {
 		double real = complex_buffer[i].real;
 		double imag = complex_buffer[i].imag;
+
 		xa[i] = hypot(real, imag);
 
 		/* calculing frequency */

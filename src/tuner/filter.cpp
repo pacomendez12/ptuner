@@ -3,7 +3,7 @@
 
 //copyright ctuner https://code.google.com/p/ctuner/
 
-	void
+void
 Filter::Butterworth(double * data, int data_size, double * buffer, int buffer_size)
 {
 	int offset = buffer_size - data_size;

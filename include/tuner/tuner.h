@@ -83,6 +83,9 @@ class Tuner {
 
 
 
+
+
+
 	public:
 	Tuner();
 	Tuner(s_system_t);
@@ -99,6 +102,7 @@ class Tuner {
 	/* main methods */
 	void postFftProccess(complex * complex_buffer, int buffer_size);
 	void downSampling();
+	void findFrequency();
 
 
 	double getFundamentalFrequency() {

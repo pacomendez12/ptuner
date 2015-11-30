@@ -56,13 +56,15 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 	if (downsample)
 		downSampling();
 
-	for (int i = 0; i < OUTPUT_BUFFER_SIZE; i++) {
+	findFrequency();
+
+//	for (int i = 0; i < OUTPUT_BUFFER_SIZE; i++) {
 		//std::cout << dx[i] <<" ";
 		/*if (data[i] != buffer[size_data_keept / sizeof(double) + i]) {
 			well = false;
 			break;
 		}*/
-	}
+//	}
 	//std::cout << std::endl;
 
 }
@@ -131,6 +133,24 @@ Tuner::downSampling()
 			xa[i] += x5[i];
 
 		dx[i] = xa[i] - xa[i - 1];
+	}
+}
+
+void
+Tuner::findFrequency()
+{
+	double max = 0.0;
+	double f = 0.0;
+
+	int count = 0;
+
+	int limit OUTPUT_BUFFER_SIZE - 1;
+
+	for (int i = 1; i < limit; i++) {
+		if (xa[i] > max) {
+			max = xa[i];
+			f = xf[i];
+		}
 	}
 }
 

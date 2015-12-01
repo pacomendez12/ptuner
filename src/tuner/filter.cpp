@@ -194,12 +194,25 @@ Filter::configure()
 	switch(type) {
 		case CHEBY_TYPE:
 			initiate_cheby_filter(8, 0.5, 0.9 / oversampling);
+			/* at this point _a and _b are setted */
 			break;
 
 	}
 	N = max(Na, Nb);
 
 	a = new double[N + 1];
+	b = new double[N + 1];
+	s = new double[N + 1];
 
-	/* at this point _a and _b are setted */
+	memset(a, 0, sizeof(double) * (N + 1));
+	memset(b, 0, sizeof(double) * (N + 1));
+	memset(s, 0, sizeof(double) * (N + 1));
+
+	memcpy(a, _a, (Na + 1) * sizeof(double));
+	memcpy(b, _b, (Nb + 1) * sizeof(double));
+
+	for (int i = 0; i < N + 1; i++) {
+		a[i] /= a[0];
+		b[i] /= b[0];
+	}
 }

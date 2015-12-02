@@ -22,12 +22,25 @@ Tuner::callbackData(double * data, int data_size, void * arg)
 	memmove(buffer, buffer + data_size, size_data_keept);
 	
 	/* copy data to buffer array, the filter also have to copy de data */
-	if (useFilter && filter == BUTTERWORTH) {
-		Filter::Butterworth(data, data_size, buffer, TUNER_SAMPLES);
+	if (useFilter) {
+		if (filter_type == BUTTERWORTH) {
+			Filter::Butterworth(data, data_size, buffer, TUNER_SAMPLES);
+		} else if (filter_type == CHEBY_TYPE) {
+			filter->filter(data_size, data, &buffer[size_data_keept
+										/ sizeof(double)]);
+		}
 	} else {
 		memcpy(buffer + size_data_keept / sizeof(double), data, data_size
 				* sizeof(double));
 	}
+
+}
+
+
+void
+Tuner::decimate()
+{
+
 
 }
 
@@ -49,8 +62,12 @@ Tuner::Tuner(s_system_t sst)
 
 	/* enable filter by default */
 	useFilter = true;
-	//useFilter = false;
-	filter = BUTTERWORTH;
+	//filter = BUTTERWORTH;
+	filter_type = CHEBY_TYPE;
+
+
+	/* Initialize filter */
+	filter = new Filter(filter_type, oversampling);
 
 
 	/* Han window */
@@ -68,8 +85,16 @@ Tuner::~Tuner()
 	if (status == TUNING) {
 		stopTuning();
 	}
-	delete sound;
-	sound = NULL;
+
+	if (sound) {
+		delete sound;
+		sound = NULL;
+	}
+
+	if (filter) {
+		delete filter;
+		filter = NULL;
+	}
 	tunerPtr = NULL;
 }
 

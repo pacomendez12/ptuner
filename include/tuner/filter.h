@@ -8,7 +8,9 @@
 #include <util/complex.h>
 
 
-enum FilterType {CHEBY_TYPE}; 
+enum FilterType {CHEBY_TYPE,
+				BUTTERWORTH
+}; 
 
 
 #define max(a,b) (((a)<(b))?(b):(a))

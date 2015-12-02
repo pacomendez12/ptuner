@@ -7,8 +7,8 @@ vector_product(int n, complex * v)
 	complex aux;
 
 	for (int i = 0; i < n; i++) {
-		res.real = -v[i].real;
-		res.imag = -v[i].imag;
+		aux.real = -v[i].real;
+		aux.imag = -v[i].imag;
 		res = res * aux;
 	}
 	return res;

@@ -50,7 +50,21 @@ Filter::~Filter()
 void
 Filter::filter(unsigned int n, double * in, double * out)
 {
+	double w, y;
+	for (unsigned int i = 0; i < n; i++) {
+		w = in[i];
+		y = 0.0;
 
+		for (int j = N - 1; j >= 0; j--) {
+			w -= a[j + 1] * s[j];
+			y += b[j + 1] * s[j];
+			s[j + 1] = s[j];
+		}
+
+		y += w * b[0];
+		s[0] = w;
+		out[i] = y;
+	}
 }
 
 

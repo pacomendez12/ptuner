@@ -1,4 +1,5 @@
 #include <tuner/filter.h>
+#include <stdio.h>
 
 
 //copyright ctuner https://code.google.com/p/ctuner/
@@ -112,7 +113,7 @@ Filter::initiate_cheby_filter(unsigned int n, double Rp, double wc)
 	complex gain;
 
 	for (int i = -(n - 1), k = 0; k < n; i += 2, k++) {
-		t = M_PI * i * (2.0 * n);
+		t = M_PI * i / (2.0 * n);
 		pole[k].real = -sv0 * cos(t);
 		pole[k].imag = cv0 * sin(t);
 	}
@@ -120,8 +121,8 @@ Filter::initiate_cheby_filter(unsigned int n, double Rp, double wc)
 	gain = vector_product(n, pole);
 
 	double f;
-	if (0 == (N & 1)) {
-		f = pow(10.0, -0.05 *Rp);
+	if (0 == (n & 1)) {
+		f = pow(10.0, -0.05 * Rp);
 		gain.real *= f;
 		gain.imag *= f;
 	}
@@ -146,21 +147,19 @@ Filter::initiate_cheby_filter(unsigned int n, double Rp, double wc)
 
 	tmp1 = vector_product(n, sp);
 	gain = gain / tmp1;
-
 	for (int i = 0; i < n; i++) {
 		tmp1.real = (2.0 + pole[i].real * T);
 		tmp1.imag = (0.0 + pole[i].imag * T);
-		aux2.imag = (2.0 - pole[i].real * T);
+		aux2.real = (2.0 - pole[i].real * T);
 		aux2.imag = (0.0 - pole[i].imag * T);
 		pole[i] = tmp1 / aux2;
 	}
-
 	a[0] = 1.0;
 	a[0] = 1.0;
 	tmp_a[0] = 1.0;
 	tmp_b[0] = 1.0;
 
-	for (int i = 0; i <= n; i++) {
+	for (int i = 1; i <= n; i++) {
 		a[i] = 0.0;
 		a[i] = 0.0;
 		tmp_a[i] = 0.0;
@@ -221,6 +220,7 @@ Filter::configure()
 	memset(a, 0, sizeof(double) * (N + 1));
 	memset(b, 0, sizeof(double) * (N + 1));
 	memset(s, 0, sizeof(double) * (N + 1));
+
 
 	memcpy(a, _a, (Na + 1) * sizeof(double));
 	memcpy(b, _b, (Nb + 1) * sizeof(double));

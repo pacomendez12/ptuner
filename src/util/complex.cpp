@@ -38,11 +38,11 @@ complex::operator/(complex & c2) {
 	return tmp;
 }
 
-
+/*
 complex
 complex::operator*(double r) {
 	complex tmp;
 	tmp.real = real * r;
 	tmp.imag = imag * r;
 	return tmp;
-}
+}*/

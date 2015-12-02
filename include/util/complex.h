@@ -47,7 +47,7 @@ class complex {
 	complex operator -(complex & c2);
 	complex operator *(complex & c2);
 	complex operator /(complex & c2);
-	complex operator *(double r);
+//	complex operator *(double r);
 
 };
 

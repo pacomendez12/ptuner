@@ -1,6 +1,7 @@
 #include <sound_system/sound_system.h>
 #include <util/complex.h>
 #include <sound_system/definitions.h>
+#include <tuner/filter.h>
 
 #include <cmath>
 
@@ -17,7 +18,7 @@ using namespace Sound_system;
 
 enum {
 	/* it needs at least 16384 samples to get at most ~8000 hz frequency */
-	TUNER_SAMPLES = 16384,
+	TUNER_SAMPLES = 16384, //tuner samples are incorrect
 	DEFAULT_OVERSAMPLING = 25,
 	DEFAULT_DOWNSAMPLE = true,
 };
@@ -28,10 +29,6 @@ enum TunerStatus {
 	NOT_TUNING
 };
 
-
-enum Filters {
-	BUTTERWORTH,
-};
 
 class Tuner {
 	private:
@@ -56,13 +53,14 @@ class Tuner {
 
 	/* Tnuning parameters */
 	bool useFilter;
-	Filters filter;
+	FilterType filter_type;
+	Filter * filter;
 	bool downsample;
 
 
 	public:
 	Tuner();
-	Tuner(s_system_t);
+	Tuner(s_system_t sst);
 	
 	~Tuner();
 
@@ -74,6 +72,9 @@ class Tuner {
 
 
 	/* main methods */
+	void decimate();
+
+
 	void postFftProccess(complex * complex_buffer, int buffer_size);
 	void downSampling();
 	void findFrequency();

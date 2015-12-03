@@ -6,6 +6,7 @@ FLAGS_BIN=-std=c++11 -ggdb
 
 SRC=$(wildcard src/sound_system/*.cpp) $(wildcard src/util/*.cpp) $(wildcard src/tuner/*.cpp) $(wildcard src/fft/*.cpp)
 GUI_SRC=$(wildcard src/gui/*.cpp)
+NET_SRC=$(wildcard src/network/*.cpp)
 #SRC=$(wildcard src/sound_system/*.cpp) 
 OBJ=$(wildcard ./*.o)
 
@@ -18,6 +19,12 @@ system: $(SRC)
 
 gui: $(GUI_SRC)
 	$(GCC) src/gui/main_app.cpp -o gui -Iinclude/gui `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS)
+
+net: net_make
+	$(GCC) -o net src/NeuronalNetworkMain.cpp $(OBJ) -Iinclude $(FLAGS_BIN)
+
+net_make: $(NET_SRC)
+	$(GCC) -c $^ -Iinclude $(FLAGS)
 
 clean:
 	rm -f *.o main

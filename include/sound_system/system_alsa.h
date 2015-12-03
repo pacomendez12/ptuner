@@ -17,7 +17,8 @@
 #define CARD_NAME_SIZE 50
 
 /* Defines the default buffer size for ALSA */
-#define ALSA_DEFAULT_BUFFER_SIZE 256
+//#define ALSA_DEFAULT_BUFFER_SIZE 256
+#define ALSA_DEFAULT_BUFFER_SIZE 128
 
 /* Default number of channels */
 #define ALSA_DEFAULT_NUMBER_CHANNELS 2

@@ -1,4 +1,4 @@
-#include "NeuronalNetwork.h"
+#include <network/NeuronalNetwork.h>
 
 using namespace std;
 

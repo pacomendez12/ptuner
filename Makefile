@@ -21,7 +21,7 @@ gui: $(GUI_SRC)
 	$(GCC) src/gui/main_app.cpp -o gui -Iinclude/gui `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS)
 
 net: net_make
-	$(GCC) -o net src/NeuronalNetworkMain.cpp $(OBJ) -Iinclude $(FLAGS_BIN)
+	$(GCC) -o net src/MainNeuronalNetwork.cpp $(OBJ) -Iinclude $(FLAGS_BIN)
 
 net_make: $(NET_SRC)
 	$(GCC) -c $^ -Iinclude $(FLAGS)

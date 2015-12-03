@@ -40,7 +40,8 @@ class NeuronalNetwork{
 		void training(vector < vector<int> > trainingMatrix, vector<int> results);
 
 		//Utilities
-		double randomNumber(double min, double max);
+		double randomNumber();
+		double randomWeight();
 		void printNeuronalNetwork();
 };
 

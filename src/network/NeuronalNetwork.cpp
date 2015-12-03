@@ -1,4 +1,4 @@
-#include <network/NeuronalNetwork.h>
+#include "NeuronalNetwork.h"
 
 using namespace std;
 
@@ -34,13 +34,18 @@ void NeuronalNetwork::initWeights(){
 	//Init input to hidden layer weights values
 	for(int i=0; i<totalInputs; i++){
 		for(int y=0; y<hiddenLayerSize; y++){
-			inputHiddenWeightsVector[i].push_back(randomNumber());
+			inputHiddenWeightsVector[i].push_back(randomWeight());
 		}
 	}
 
 	//Init hidden to output layer weights values
 	for(int z=0; z<hiddenLayerSize; z++){
-		hiddenOutputWeightsVector.push_back(randomNumber());
+		hiddenOutputWeightsVector.push_back(randomWeight());
+	}
+
+	//Init hidden layer values in order to save output from the hidden layer
+	for(int i=0; i<hiddenLayerSize; i++){
+		hiddenLayerValuesVector.push_back(0);
 	}
 }
 
@@ -48,29 +53,24 @@ double NeuronalNetwork::neuronalNetworkExecution(vector<int> currentInput){
 	double output = 0;
 	int currentInputSize = currentInput.size();
 
-	//printf("currentInputSize: %d\n", currentInputSize);
 	/*
 	* It goes from 0 to the total neurons in the hidden layer
-	* When this for finishes, al the hidden layer neurons,could be activated or not
+	* When this for finishes, all the hidden layer neurons,could be activated or not
 	* in order to pass this new value to next layer and this values is allocated in hiddenLayerValuesVector
 	* where h is every neuron
 	*/
-	//printf("Layer input hidden\n");
 	for(int h=0; h<hiddenLayerSize; h++){
 		double sums = 0;
 		for(int i=0; i<currentInputSize; i++){
-			//printf("current: %d,%d:%d\n",h,i,currentInput[i]);
 			sums += currentInput[i] * inputHiddenWeightsVector[i][h];
 		}
-		//printf("Termino suma\n");
-		hiddenLayerValuesVector.push_back(sigmoidFunction(sums));
+		hiddenLayerValuesVector[h] = sigmoidFunction(sums);
 	}
 
 	/*
 	* Activation function for the last neuron in the perceptron
 	* Result values from the hidden layer to the last neuron
 	*/
-	//printf("Layer hidden output\n");
 	for(int h=0; h<hiddenLayerSize; h++){
 		output += hiddenLayerValuesVector[h] * hiddenOutputWeightsVector[h];
 	}
@@ -94,7 +94,7 @@ void NeuronalNetwork::backPropagation(vector<int> currentInput, double output, d
 	vector<double> hiddenDeltas;
 	for(int h=0; h<hiddenLayerSize; h++){
 		double currentDelta = sigmoidDerivate(hiddenLayerValuesVector[h]) * outputDelta * hiddenOutputWeightsVector[h];
-		hiddenDeltas.push_back(currentDelta); 
+		hiddenDeltas.push_back(currentDelta);
 	}
 
 	for(int i=0; i<inputSize; i++){
@@ -107,21 +107,16 @@ void NeuronalNetwork::backPropagation(vector<int> currentInput, double output, d
 void NeuronalNetwork::training(vector < vector<int> > trainingMatrix, vector<int> results){
 	//Has all the elements that we will test to train the matrix
 	int epochSize = results.size();
-	
-	printf("In training, %d\n",epochSize);
-	
 	int hits=0;
 	int currentRow = 0;
 	int epochs = 0;
 
 	while(epochSize > hits && epochs < minEpochsApplied){
-	//while(currentRow < epochSize){
 		vector<int> currentInput = trainingMatrix[currentRow];
 
 		//Result of evaluating completly one element of the set
 		double output = neuronalNetworkExecution(currentInput);
 
-		
 		//Adjust values
 		double expectedValue = results[currentRow] == 0 ? 0.25 : 0.75;
 		double error = expectedValue - output;
@@ -129,28 +124,36 @@ void NeuronalNetwork::training(vector < vector<int> > trainingMatrix, vector<int
 		/*
 		* 0.25 is the range, the abs is used to check if the value is in the correct range
 		*/
-		if(abs(error) <= 0.25){
+		if(abs(error) <= 0.01)
 			hits++;
-		}else{
-			//printf("Previous hits: %d\n",hits);
+		else{
 			hits = 0;
 			backPropagation(currentInput, expectedValue, error);
 		}
-		
 
 		currentRow++;
-		
+
 		if(currentRow == epochSize){
 			epochs++;
 			currentRow = 0;
-		}		
+		}
 	}
-	printf("HITS: %d\nEPOCHS: %d\nFINISH TRAINING\n", hits, epochs);
+	printf("Resultados del entrenamiento\n"
+			"HITS: %d\n"
+			"EPOCHS: %d\n", hits, epochs);
 }
 
 //Utilities
+
+/**
+ * Gets a random number form 0 to 1
+ */
 double NeuronalNetwork::randomNumber(){
-    return -0.1 + 0.2 * rand();
+    return ((double)rand()/(double)RAND_MAX);
+}
+
+double NeuronalNetwork::randomWeight(){
+	return -0.1 + 0.2 * randomNumber();
 }
 
 void NeuronalNetwork::printNeuronalNetwork(){
@@ -161,7 +164,7 @@ void NeuronalNetwork::printNeuronalNetwork(){
 		}
 	}
 
-	
+
 	printf("Weights from hidden to output\n");
 	for(int z=0; z<hiddenLayerSize; z++){
 		printf("%f\n",hiddenOutputWeightsVector[z]);

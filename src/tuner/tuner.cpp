@@ -2,6 +2,7 @@
 #include <tuner/filter.h>
 #include <fft/fft.h>
 #include <util/array.h>
+#include <util/mem.h>
 
 static Tuner * tunerPtr;
 
@@ -14,34 +15,62 @@ callback(double * data, int data_size, void * arg)
 void
 Tuner::callbackData(double * data, int data_size, void * arg)
 {
-	//data received from sound system
-	
-	/* once que have de new data it needs to reorganize it,
-	and memmove is perfect for this task */
-	int size_data_keept = (TUNER_SAMPLES - data_size) * sizeof(double);
-	memmove(buffer, buffer + data_size, size_data_keept);
-	
-	/* copy data to buffer array, the filter also have to copy de data */
-	if (useFilter) {
-		if (filter_type == BUTTERWORTH) {
-			Filter::Butterworth(data, data_size, buffer, TUNER_SAMPLES);
-		} else if (filter_type == CHEBY_TYPE) {
-			filter->filter(data_size, data, &buffer[size_data_keept
-										/ sizeof(double)]);
-		}
-	} else {
-		memcpy(buffer + size_data_keept / sizeof(double), data, data_size
-				* sizeof(double));
-	}
+	/* data received from sound system, copy as fast as posible */
+	memcpy(buffer, data, data_size * sizeof(double));
 
+	/* apply decimation to have better results */
+	decimate();
+
+	/* finding fundamental frequency */
+	findFrequency();
 }
 
 
 void
 Tuner::decimate()
 {
+	int data_size = sound_system_buffer_size;
+	int dec_out_len = 1 + (data_size - (dii + 1)) / oversampling;
 
+	//printf("dec_out_len = %d\n", dec_out_len);
 
+	if (complete_buffer_size > dec_out_len) {
+		/* once que have de new data it needs to reorganize it,
+		   and memmove is perfect for this task */
+		unsigned int size_data_moved = (complete_buffer_size - dec_out_len);
+		memmove(complete_buffer, complete_buffer + dec_out_len,
+				size_data_moved * sizeof(double));
+		//printf("moved = %u\n", size_data_moved);
+	}
+
+	if (oversampling > 0) {
+		double * in = buffer;
+		double * out = complete_buffer + (complete_buffer_size - dec_out_len);
+
+		/* filtering data */
+		/* the input is also de output for the filter */
+		filter->filter(data_size, in, in);
+
+		/* downsampling */
+		for (int doi = 0; dii < data_size; doi++, dii += oversampling) {
+			out[doi] = in[dii];
+		}
+		dii -= data_size;
+	} else {
+		memcpy(complete_buffer + complete_buffer_size - dec_out_len, buffer,
+				dec_out_len * sizeof(double));
+	}
+
+}
+
+void
+Tuner::findFrequency()
+{
+	/* applying window */
+	for (int i = 0; i < fft_size; i++) {
+		complete_buffer_with_window[i] =
+			complete_buffer[complete_buffer_size - fft_size + i] * han_fft[i];
+	}
 }
 
 
@@ -59,6 +88,23 @@ Tuner::Tuner(s_system_t sst)
 	oversampling = DEFAULT_OVERSAMPLING; // we need to use a variable here;
 	peak_number = 3;
 	downsample = DEFAULT_DOWNSAMPLE;
+	time_window = 0.5; /* seconds */
+	complete_buffer_size = (unsigned int) ceil(sample_rate * 
+											time_window / oversampling);
+	fft_size = 512;
+	delta_fft = M_PI * 2.0 / fft_size;
+	_1_n2 = 1.0 / pow(fft_size, 2);
+	dii = 0;
+
+
+	/* initializing buffers */
+	complete_buffer = new double[complete_buffer_size];
+	complete_buffer_with_window = new double[fft_size];
+	buffer = new double[sound_system_buffer_size];
+	hanWindow = new double[complete_buffer_size];
+	han_fft = new double[fft_size];
+	complex_buffer = new complex[complete_buffer_size];
+
 
 	/* enable filter by default */
 	useFilter = true;
@@ -71,8 +117,13 @@ Tuner::Tuner(s_system_t sst)
 
 
 	/* Han window */
-	for (int i = 0; i < TUNER_SAMPLES; i++) {
-		hanWindow[i] = 0.5 * (1 - cos(2 * M_PI * i / (TUNER_SAMPLES - 1.0)));
+	for (int i = 0; i < complete_buffer_size; i++) {
+		hanWindow[i] = 0.5 * (1 - cos(2 * M_PI * i / (complete_buffer_size - 1.0)));
+	}
+
+	/* Han for fft */
+	for (int i = 0; i < fft_size; i++) {
+		han_fft[i] = 0.5 * (1 - cos(2 * M_PI * i / (fft_size - 1.0)));
 	}
 
 	/* global Tuner ptr have to be able to call the 
@@ -86,15 +137,14 @@ Tuner::~Tuner()
 		stopTuning();
 	}
 
-	if (sound) {
-		delete sound;
-		sound = NULL;
-	}
+	safe_delete(sound);
+	safe_delete(filter);
+	safe_delete_array(complete_buffer);
+	safe_delete_array(complete_buffer_with_window);
+	safe_delete_array(buffer);
+	safe_delete_array(hanWindow);
+	safe_delete_array(han_fft);
 
-	if (filter) {
-		delete filter;
-		filter = NULL;
-	}
 	tunerPtr = NULL;
 }
 
@@ -103,7 +153,7 @@ void
 Tuner::startTuning()
 {
 	status = TUNING;
-	/* init capturing from sound system */
+	/* start capture from sound system */
 	sound->record();
 }
 

@@ -81,8 +81,11 @@ Recorder_Alsa::get_data_from_alsa()
 #endif
 		}
 
-		//call callback over sound_system
-		saptr->callback(saptr->float_buffer, saptr->parameters.buffer_size, NULL);
+		/* it needs to check if the program up is still receiving data */ 
+		if (status == RECORDING) {
+			//call callback over sound_system
+			saptr->callback(saptr->float_buffer, saptr->parameters.buffer_size, NULL);
+		}
 	}
 	saptr->slog(TAG, "status has changed from RECORDING to STOPPED");
 }

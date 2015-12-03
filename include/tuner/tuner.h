@@ -17,8 +17,6 @@ using namespace Sound_system;
 #define TAG "TUNER"
 
 enum {
-	/* it needs at least 16384 samples to get at most ~8000 hz frequency */
-	TUNER_SAMPLES = 16384, //tuner samples are incorrect
 	DEFAULT_OVERSAMPLING = 25,
 	DEFAULT_DOWNSAMPLE = true,
 };
@@ -36,9 +34,12 @@ class Tuner {
 	s_system_t sound_system_type;
 	TunerStatus status;
 
-	double buffer[TUNER_SAMPLES];
-	complex complex_buffer[TUNER_SAMPLES];
-	double hanWindow[TUNER_SAMPLES];
+	double * buffer;
+	double * complete_buffer;
+	double * complete_buffer_with_window;
+	complex  * complex_buffer;
+	double * hanWindow;
+	double * han_fft;
 
 
 	/* parameters from sound system */
@@ -57,6 +58,17 @@ class Tuner {
 	Filter * filter;
 	bool downsample;
 
+	/* other parameters */
+	double time_window;  /* seconds */
+	unsigned int complete_buffer_size;
+
+	int fft_size;
+	/* fourier variables */
+	double delta_fft;
+	double _1_n2;
+
+	int dii; /* decimation intput index */ 
+
 
 	public:
 	Tuner();
@@ -73,10 +85,6 @@ class Tuner {
 
 	/* main methods */
 	void decimate();
-
-
-	void postFftProccess(complex * complex_buffer, int buffer_size);
-	void downSampling();
 	void findFrequency();
 
 

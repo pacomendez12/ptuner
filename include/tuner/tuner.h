@@ -27,8 +27,10 @@ enum TunerStatus {
 	NOT_TUNING
 };
 
+class Fft;
 
 class Tuner {
+	friend class Fft;
 	private:
 	sound_system * sound;
 	s_system_t sound_system_type;
@@ -69,6 +71,8 @@ class Tuner {
 
 	int dii; /* decimation intput index */ 
 
+	/* FFT object */
+	Fft * fft;
 
 	public:
 	Tuner();

@@ -97,6 +97,9 @@ Tuner::Tuner(s_system_t sst)
 	dii = 0;
 
 
+	/* instanciate fft object */
+	fft = new Fft(this);
+
 	/* initializing buffers */
 	complete_buffer = new double[complete_buffer_size];
 	complete_buffer_with_window = new double[fft_size];
@@ -144,6 +147,8 @@ Tuner::~Tuner()
 	safe_delete_array(buffer);
 	safe_delete_array(hanWindow);
 	safe_delete_array(han_fft);
+
+	safe_delete(fft);
 
 	tunerPtr = NULL;
 }

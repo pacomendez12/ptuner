@@ -1,55 +1,54 @@
 #include <fft/fft.h>
 #include <cmath>
 
-void 
-Fft::fft(complex * data, int n)
+
+Fft::Fft(Tuner * tuner)
 {
-    double norm = sqrt(1.0 / n);
+	double alpha;
 
-    for (int i = 0, j = 0; i < n; i++)
-    {
-	if (j >= i)
-	{
-	    double tr = data[j].real * norm;
+	wn = new complex[tuner->fft_size];
 
-	    data[j].real = data[i].real * norm;
-	    data[j].imag = 0.0;
-
-	    data[i].real = tr;
-	    data[i].imag = 0.0;
+	for (int i = 0; i < tuner->fft_size / 2; i++) {
+		alpha = -2.0 * i * M_PI / tuner->fft_size;
+		wn[i].real = cos(alpha);
+		wn[i].imag = sin(alpha);
 	}
+}
 
-	int m = n / 2;
-	while (m >= 1 && j >= m)
-	{
-	    j -= m;
-	    m /= 2;
-	}
-	j += m;
-    }
-    
-    for (int mmax = 1, istep = 2 * mmax; mmax < n;
-	 mmax = istep, istep = 2 * mmax)
-    {
-	double delta = (M_PI / mmax);
-	for (int m = 0; m < mmax; m++)
-	{
-	    double w = m * delta;
-	    double wr = cos(w);
-	    double wi = sin(w);
+Fft::~Fft()
+{
+	delete [] wn;
+}
 
-	    for (int i = m; i < n; i += istep)
-	    {
-		int j = i + mmax;
-		double tr = wr * data[j].real - wi * data[j].imag;
-		double ti = wr * data[j].imag + wi * data[j].real;
-		data[j].real = data[i].real - tr;
-		data[j].imag = data[i].imag - ti;
-		data[i].real += tr;
-		data[i].imag += ti;
-	    }
+
+void
+Fft::fft_rec(double * in, complex * out, unsigned int n, unsigned int offset,
+		unsigned int d1, unsigned int step)
+{
+	complex x1, x2;
+	unsigned long np2 = n / 2;
+
+	if (n == 2) {
+		x1.real = in[offset];
+		x1.imag = 0;
+		x2.real = in[offset + step];
+		x2.imag = 0;
+
+		out[d1] = x1 + x2;
+		out[d1 + np2] = x1 - x2;
+	} else {
+		unsigned long a, b, c, q;
+
+		/* recursive call */
+		fft_rec(in, out, np2, offset, d1, step * 2);
+		fft_rec(in, out, np2, offset + step, d1 + np2, step * 2);
 	}
-    }
+}
+
+void
+Fft::fft(double * in, complex * out, unsigned int n)
+{
+    fft_rec(in, out, n, 0, 0, 1);
 }
 
 

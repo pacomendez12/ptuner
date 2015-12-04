@@ -12,6 +12,7 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 	int index[tuner->peak_number];
 	int peak;
 	double rejection_relation = pow(10, 20 / 10);
+	int m;
 
 	for (int i = 0; i < tuner->peak_number; i++) {
 		index[i] = -1;
@@ -28,7 +29,7 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 
 	for (int i = low_index; i < n - peak_half_width; i++) {
 		if (is_peak(x, i)) {
-			int m = 0;
+			m = 0;
 			for (int j = 0; j < tuner->peak_number; j++) {
 				if (index[i] == -1) {
 					m = j;
@@ -53,7 +54,7 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 
 	/* searching the maximun peak */
 	for (int i = 0; i < tuner->peak_number; i++) {
-		if (index[i] == -1 && x[index[i]] > max) {
+		if ((index[i] |= -1) && (x[index[i]] > max)) {
 			max = x[index[i]];
 			max_index = index[i];
 		}
@@ -61,7 +62,7 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 
 	if (max_index != -1) {
 		for (int i = 0; i < tuner->peak_number; i++) {
-			if (index[i] == -1 || rejection_relation * x[index[i]] < max) {
+			if (index[i] == -1 || (rejection_relation * x[index[i]] < max)) {
 				index[i] = n;
 			}
 		}

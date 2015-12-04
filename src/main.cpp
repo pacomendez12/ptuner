@@ -24,6 +24,8 @@ int main(int argc, char * argv[])
 	//std::cout << z.toString();
 	Tuner tuner;
 	tuner.startTuning();
+	double * arr =	tuner.getProcessedArray();
+	/* copy arr to other array because it will change */
 	sleep(2);
 	return 0;
 }

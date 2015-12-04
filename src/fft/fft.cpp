@@ -42,6 +42,16 @@ Fft::fft_rec(double * in, complex * out, unsigned int n, unsigned int offset,
 		/* recursive call */
 		fft_rec(in, out, np2, offset, d1, step * 2);
 		fft_rec(in, out, np2, offset + step, d1 + np2, step * 2);
+
+		for (c = 0, q = 0; q < n / 2; q++, c += step) {
+			a = q + d1;
+			b = a + np2;
+
+			x1 = out[a];
+			x2 = out[b] * wn[c];
+			out[a] = x1 + x2;
+			out[b] = x1 - x2;
+		}
 	}
 }
 
@@ -52,3 +62,55 @@ Fft::fft(double * in, complex * out, unsigned int n)
 }
 
 
+void
+Fft::fft_spd(double * in, int n1, double wi, double dw, double * out, int n2)
+{
+	double real, imag;
+	double wn;
+	double n1_2 = pow(n1, 2);
+
+	for (int i = 0; i < n2; i++) {
+		real = imag = 0;
+		for (int n = 0; n < n1; n++) {
+			wn = wi * dw * i * n;
+			real = real + cos(wn) * in[n];
+			imag = imag - cos(wn) * in[n];
+		}
+		out[i] = (pow(real, 2) + pow(imag, 2)) / n1_2;
+	}
+
+}
+
+
+void
+Fft::fft_spd_diff(double * in, int n, double w, double & out_d1, double & out_d2)
+{
+	double cos_wn, sin_wn;
+
+	double sum_cos_wn = 0.0;
+	double sum_sin_wn = 0.0;
+	double n_sum_cos_wn = 0.0;
+	double n_sum_sin_wn = 0.0;
+	double n2_sum_cos_wn = 0.0;
+	double n2_sum_sin_wn = 0.0;
+
+	for (int i = 0; i < n; i++) {
+		cos_wn = in[i] * cos(w * i);
+		sin_wn = in[i] * sin(w * i);
+	
+		sum_sin_wn += sin_wn;
+		sum_cos_wn += cos_wn;
+
+		n_sum_sin_wn += sin_wn * i;
+		n_sum_cos_wn += cos_wn * i;
+
+		n2_sum_sin_wn += sin_wn * i * i;
+		n2_sum_cos_wn += cos_wn * i * i;
+	}
+
+	out_d1 = 2.0 * 
+		(sum_sin_wn * n_sum_cos_wn - sum_cos_wn * n_sum_sin_wn) / pow(n, 2);
+
+	out_d2 = 2.0 * (pow(n_sum_cos_wn,2) - sum_sin_wn * n2_sum_sin_wn +
+			pow(n_sum_sin_wn, 2) - sum_cos_wn * n2_sum_cos_wn) / pow(n, 2);
+}

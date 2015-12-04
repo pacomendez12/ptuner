@@ -99,14 +99,4 @@ class Tuner {
 
 };
 
-
-
-#define DOWNSAMPLING_METHOD(n) \
-	for (int i = 0; i < ARRAY_SIZE(x##n); i++) { \
-		x##n[i] = 0.0; \
-		for (int j = 0; j < n; j++) { \
-			x##n[i] += xa[(i * n) + j] / (double)n; \
-		} \
-	}\
-
 #endif /* end of include guard: TUNER_H */

@@ -86,12 +86,15 @@ Tuner::findFrequency()
 	fft->fft(complete_buffer_with_window, complex_buffer, fft_size);
 
 	for (int i = 0; i < fft_size / 2; i++) {
-		fft_spd_buffer[i] = (pow(complex_buffer[i].real, 2) +
-				pow(complex_buffer[i]. imag, 2)) / _1_n2;
+		fft_spd_buffer[i] = (complex_buffer[i].real * complex_buffer[i].real +
+				complex_buffer[i].imag * complex_buffer[i].imag) * _1_n2;
 	}
 
+	
 	/* copying representable data (that could be in a chart */
 	memcpy(representable_data, fft_spd_buffer, fft_size / 2 * sizeof(double));
+
+	/* I thing the nerual network will use representable data        ****** */ 
 
 	fft_spd_diff_buffer[0] = 0.0;
 	for (int i = 1; i < fft_size / 2 - 1; i++) {
@@ -101,11 +104,15 @@ Tuner::findFrequency()
 			fft_spd_diff_buffer[i] = 0.0;
 		}
 	}
+	/*for (int i = 0; i < 10; i++) {
+		printf("%lf ", fft_spd_diff_buffer[i]);
+	}
+	cout << endl << endl;*/
 
 	/* look for peak */
 	int m = signal->get_fundamental_peak(fft_spd_buffer,
 										fft_spd_diff_buffer, fft_size / 2);
-	//std::cout << "M = " << m << endl;
+	std::cout << "M = " << m << endl;
 	double w = (m - 1) * delta_fft;
 
 	if (m == (signed) fft_size / 2) {
@@ -182,7 +189,7 @@ Tuner::Tuner(s_system_t sst)
 											time_window / oversampling);
 	fft_size = 512;
 	delta_fft = M_PI * 2.0 / fft_size;
-	_1_n2 = 1.0 / pow(fft_size, 2);
+	_1_n2 = 1.0 / (fft_size * fft_size);
 	dii = 0;
 
 
@@ -216,12 +223,16 @@ Tuner::Tuner(s_system_t sst)
 
 	/* Han window */
 	for (int i = 0; i < complete_buffer_size; i++) {
-		hanWindow[i] = 0.5 * (1 - cos(2 * M_PI * i / (complete_buffer_size - 1.0)));
+		/* han */
+//		hanWindow[i] = 0.5 * (1 - cos(2 * M_PI * i / (complete_buffer_size - 1.0)));
+		/* hamming */
+		hanWindow[i] = 0.53836 - 0.46164 * cos((2 * M_PI * i) / (complete_buffer_size - 1.0));
 	}
 
 	/* Han for fft */
 	for (int i = 0; i < fft_size; i++) {
-		han_fft[i] = 0.5 * (1 - cos(2 * M_PI * i / (fft_size - 1.0)));
+		//han_fft[i] = 0.5 * (1 - cos(2 * M_PI * i / (fft_size - 1.0)));
+		han_fft[i] = 0.53836 - 0.46164 * cos((2 * M_PI * i) / (fft_size - 1.0));
 	}
 
 	/* global Tuner ptr have to be able to call the 

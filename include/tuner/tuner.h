@@ -2,6 +2,7 @@
 #include <util/complex.h>
 #include <sound_system/definitions.h>
 #include <tuner/filter.h>
+#include <mutex>
 
 #include <cmath>
 
@@ -19,6 +20,7 @@ using namespace Sound_system;
 enum {
 	DEFAULT_OVERSAMPLING = 25,
 	DEFAULT_DOWNSAMPLE = true,
+	DEFAULT_DFT_SIZE = 15,
 };
 
 
@@ -28,20 +30,30 @@ enum TunerStatus {
 };
 
 class Fft;
+class Signal;
 
 class Tuner {
 	friend class Fft;
+	friend class Signal;
 	private:
 	sound_system * sound;
 	s_system_t sound_system_type;
 	TunerStatus status;
 
+	/* mutex to protect complete_buffer */
+	std::mutex buffer_mutex;
+
 	double * buffer;
 	double * complete_buffer;
 	double * complete_buffer_with_window;
+	double * windowed_buffer;
+	double * fft_spd_buffer;
+	double * fft_spd_diff_buffer;
+	double * spd_dft;
 	complex  * complex_buffer;
 	double * hanWindow;
 	double * han_fft;
+	double * representable_data;
 
 
 	/* parameters from sound system */
@@ -50,6 +62,7 @@ class Tuner {
 
 	unsigned int oversampling;
 	unsigned int peak_number;
+	unsigned int dft_size;
 
 	/* the goal */
 	double frequency;
@@ -73,6 +86,8 @@ class Tuner {
 
 	/* FFT object */
 	Fft * fft;
+	Signal * signal; /* signal object */
+
 
 	public:
 	Tuner();

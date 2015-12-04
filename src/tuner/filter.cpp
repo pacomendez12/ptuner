@@ -32,11 +32,16 @@ Filter::Filter(FilterType t, unsigned int oversampling)
 {
 	type = t;
 	this->oversampling = oversampling;
-	Na = Nb = 8;
+	N = Na = Nb = 8;
+	a = new double[N + 1];
+	b = new double[N + 1];
+	_a = new double[N + 1];
+	_b = new double[N + 1];
+	s = new double[N + 1];
+
+
 	/* configure is based on type and oversampling */
 	configure();
-
-
 }
 
 
@@ -44,6 +49,8 @@ Filter::~Filter()
 {
 	delete [] a;
 	delete [] b;
+	delete [] _a;
+	delete [] _b;
 	delete [] s;
 }
 
@@ -62,10 +69,13 @@ Filter::filter(unsigned int n, double * in, double * out)
 			s[j + 1] = s[j];
 		}
 
+		if (i < 0)
+			printf("%lf ", y);
 		y += w * b[0];
 		s[0] = w;
 		out[i] = y;
 	}
+	//printf("\n");
 }
 
 
@@ -155,7 +165,7 @@ Filter::initiate_cheby_filter(unsigned int n, double Rp, double wc)
 		pole[i] = tmp1 / aux2;
 	}
 	a[0] = 1.0;
-	a[0] = 1.0;
+	b[0] = 1.0;
 	tmp_a[0] = 1.0;
 	tmp_b[0] = 1.0;
 
@@ -175,12 +185,13 @@ Filter::initiate_cheby_filter(unsigned int n, double Rp, double wc)
 		double b1 = 2.0;
 		double b2 = 1.0;
 		double a1 = -2.0 * pole[p].real;
-		double a2 = pow(pole[p].real, 2) + pow(pole[p].imag, 2);
+		//double a2 = pow(pole[p].real, 2) + pow(pole[p].imag, 2);
+		double a2 = pole[p].real * pole[p].real + pole[p].imag * pole[p].imag;
 
 		tmp_a[1] = a[1] + a1 * a[0];
 		tmp_b[1] = b[1] + b1 * b[0];
 
-		for (int i = 0; i <= n ; i++) {
+		for (int i = 2; i <= n ; i++) {
 			tmp_a[i] = a[i] + a1 * a[i - 1] + a2 * a[i - 2];
 			tmp_b[i] = b[i] + b1 * b[i - 1] + b2 * b[i - 2];
 		}
@@ -191,14 +202,15 @@ Filter::initiate_cheby_filter(unsigned int n, double Rp, double wc)
 		}
 	}
 
-
 	gain.real = fabs(gain.real);
 	for (int i = 0; i <= n; i++) {
 		b[i] *= gain.real;
 	}
 
-	_a = a;
-	_b = b;
+	memcpy(_a, a, (n + 1) * sizeof(double));
+	memcpy(_b, b, (n + 1) * sizeof(double));
+	/*_a = a;
+	_b = b;*/
 }
 
 void
@@ -211,22 +223,20 @@ Filter::configure()
 			break;
 
 	}
+
 	N = max(Na, Nb);
-
-	a = new double[N + 1];
-	b = new double[N + 1];
-	s = new double[N + 1];
-
 	memset(a, 0, sizeof(double) * (N + 1));
 	memset(b, 0, sizeof(double) * (N + 1));
 	memset(s, 0, sizeof(double) * (N + 1));
 
 
-	memcpy(a, _a, (Na + 1) * sizeof(double));
-	memcpy(b, _b, (Nb + 1) * sizeof(double));
+	memcpy(a, _a, (N + 1) * sizeof(double));
+	memcpy(b, _b, (N + 1) * sizeof(double));
 
+//	b[0] = 0.0;
 	for (int i = 0; i < N + 1; i++) {
-		a[i] /= a[0];
-		b[i] /= b[0];
+		a[i] /= _a[0];
+		b[i] /= _a[0];
+		//printf("%lf, %.15lf\n", a[i], b[i]);
 	}
 }

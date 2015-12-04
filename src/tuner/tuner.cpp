@@ -88,7 +88,7 @@ Tuner::Tuner(s_system_t sst)
 	oversampling = DEFAULT_OVERSAMPLING; // we need to use a variable here;
 	peak_number = 3;
 	downsample = DEFAULT_DOWNSAMPLE;
-	time_window = 0.5; /* seconds */
+	time_window = 0.5; /* 0.5 seconds */
 	complete_buffer_size = (unsigned int) ceil(sample_rate * 
 											time_window / oversampling);
 	fft_size = 512;

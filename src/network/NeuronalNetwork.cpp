@@ -8,6 +8,8 @@ NeuronalNetwork::NeuronalNetwork(int totalInputs,int hiddenLayerSize, int minEpo
 	this->hiddenLayerSize = hiddenLayerSize;
 	this->minEpochsApplied = minEpochsApplied;
 	this->learningRate = learningRate;
+	this->hits = 0;
+	this->epochs = 0;
 
 	//Initialize Neuronal Network;
 	initWeights();
@@ -138,9 +140,11 @@ void NeuronalNetwork::training(vector < vector<int> > trainingMatrix, vector<int
 			currentRow = 0;
 		}
 	}
-	printf("Resultados del entrenamiento\n"
-			"HITS: %d\n"
-			"EPOCHS: %d\n", hits, epochs);
+	this->hits = hits;
+	this->epochs = epochs;
+	//printf("Resultados del entrenamiento\n"
+	//		"HITS: %d\n"
+	//		"EPOCHS: %d\n", hits, epochs);
 }
 
 //Utilities

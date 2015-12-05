@@ -62,7 +62,7 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 			max_index = index[i];
 		}
 	}
-	//printf("index = [%d, %d, %d]\n", index[0], index[1], index[2]);
+	printf("index = [%d, %d, %d]\n", index[0], index[1], index[2]);
 
 	if (max_index != -1) {
 		//printf("aqui .........................\n");

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <fstream>
 
 class Interface : public Gtk::Window{
 	public:

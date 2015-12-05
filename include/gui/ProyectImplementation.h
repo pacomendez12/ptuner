@@ -8,6 +8,8 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <fstream>
+#include <iomanip>
 #include <network/NeuronalNetwork.h>
 
 class Interface : public Gtk::Window{
@@ -64,6 +66,8 @@ class Interface : public Gtk::Window{
     void printClasses();
     void trainNeuronalNetwork();
     void evaluateForRealSamples();
+    void exportTrainedNeuronalNetwork();
+    void importTrainedNeuronalNetwork();
 
   	// Child widgets:
   		

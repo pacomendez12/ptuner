@@ -133,7 +133,8 @@ Interface::Interface()
   classCombo.signal_changed().connect(sigc::mem_fun(*this,&Interface::classChanged) );
   startTrainingBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::trainNeuronalNetwork) );
   indentifyInstrumentBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::evaluateForRealSamples) );
-  
+  loadNetworkBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::importTrainedNeuronalNetwork) );
+
   initNeuronalNetworkFunctionality();
   createTestTM();
   createTestReal();
@@ -289,25 +290,39 @@ void Interface::printClasses(){
 
 void Interface::trainNeuronalNetwork(){
   printf("Inicializando entrenamiento desde interfaz\n");
+
+  printf("Se va a borrar el entrenamiento previo de la red neuronal\n");
+  
+  if(std::remove("nn-weights.data")!= 0){
+    printf("Error al borrar el archivo nn-weights.data");
+  }else{
+    printf("El archivo fue eliminado correctamente");
+  }
+
   int trainingMatrixSize = trainingMatrix.size();
+  
   if(trainingMatrixSize < 12){
     errorBuffer->set_text ("Se necesitan al menos 12 muestras para entrenar la red");
     return;
   }
 
-
-  printTrainingMatrix();
-  printClasses();
+  //printTrainingMatrix();
+  //printClasses();
 
   neuronalNetwork->training(trainingMatrix,results);
+  
   nnTrained = 1;
+  
   printf("Resultados del entrenamiento\n"
       "HITS: %d\n"
       "EPOCHS: %d\n", neuronalNetwork->hits, neuronalNetwork->epochs);
   errorBuffer->set_text ("La red neuronal ha terminado de entrenarse");
+  
   //TODO: Cambiar los mensajes
   hitsBuffer->set_text ("Hits:");
   epochsBuffer->set_text ("Epochs:");
+
+  exportTrainedNeuronalNetwork();
 }
 
 void Interface::evaluateForRealSamples(){
@@ -320,4 +335,71 @@ void Interface::evaluateForRealSamples(){
   for(int i=0; i<4; i++){
     printf("%f\n",neuronalNetwork->neuronalNetworkExecution(realMatrix[i]));
   }
+}
+
+void Interface::exportTrainedNeuronalNetwork(){
+  //Initialize file
+  int totalInputs = neuronalNetwork->totalInputs;
+  int hiddenLayerSize = neuronalNetwork->hiddenLayerSize;
+  ofstream fs;
+  fs.open("network-data.dat");
+
+  //Export input to hidden weights
+  for(int i=0; i<totalInputs; i++){
+    for(int h=0; h<hiddenLayerSize;h++){
+      double currentWeight = neuronalNetwork->inputHiddenWeightsVector[i][h];
+      fs << std::fixed << std::setprecision(8) << currentWeight;
+      fs << "\n";
+    }
+  }
+
+  for(int y=0; y<hiddenLayerSize; y++){
+    double currentWeight = neuronalNetwork->hiddenOutputWeightsVector[y];
+    fs << std::fixed << std::setprecision(8) << currentWeight;
+    fs << "\n";
+  }
+
+  fs.close();
+  printf("Se termino de guardar el entrenamiento en nn-weights.data\n");
+}
+
+void Interface::importTrainedNeuronalNetwork(){
+  //Initialize file
+  int totalInputs = neuronalNetwork->totalInputs;
+  int hiddenLayerSize = neuronalNetwork->hiddenLayerSize;
+  int totalWeights = (totalInputs * neuronalNetwork->hiddenLayerSize) + (hiddenLayerSize);
+  vector<double> weights;
+  nnTrained = 1;
+
+  ifstream infile; 
+  infile.open("network-data.dat"); 
+
+  double currentWeight = 0.0;
+  /*while (infile >> currentWeight) {
+        weights.push_back(currentWeight);
+  }
+  int weigthsSize = weights.size();
+
+  printf("%d\n",weigthsSize);
+
+  for(int i=0; i<totalWeights; i++){
+    printf("%f\n",weights[i]);
+  }
+  */
+  //Export input to hidden weights
+  for(int i=0; i<totalInputs; i++){
+    for(int h=0; h<hiddenLayerSize;h++){
+      infile >> currentWeight; 
+      neuronalNetwork->inputHiddenWeightsVector[i][h] = currentWeight;
+    }
+  }
+
+  for(int y=0; y<hiddenLayerSize; y++){
+    infile >> currentWeight;
+    neuronalNetwork->hiddenOutputWeightsVector[y] = currentWeight;
+  }
+
+  infile.close();
+  
+  printf("Se termino de exportar los datos\n");
 }

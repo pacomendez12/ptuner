@@ -111,10 +111,7 @@ class Tuner {
 		return frequency;
 	}
 
-	double * getProcessedArray() {
-		return representable_data;
-	}
-
+	double * getProcessedArray();
 
 };
 

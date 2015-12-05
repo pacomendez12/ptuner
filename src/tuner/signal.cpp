@@ -13,12 +13,13 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 	int peak;
 	double rejection_relation = pow(10, 20 / 10);
 	int m;
+	//printf("pk = %d\n", tuner->peak_number);
 
 	for (int i = 0; i < tuner->peak_number; i++) {
 		index[i] = -1;
 	}
 
-	unsigned int min_frequency = 20; /* Hz */
+	unsigned int min_frequency = 15.0; /* Hz */
 
 	unsigned int low_index = (unsigned int) ceil(min_frequency *
 			(1.0 * tuner->oversampling / tuner->sample_rate) * tuner->fft_size);
@@ -29,9 +30,10 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 
 	for (int i = low_index; i < n - peak_half_width; i++) {
 		if (is_peak(x, i)) {
+			//printf("ispeak true\n");
 			m = 0;
 			for (int j = 0; j < tuner->peak_number; j++) {
-				if (index[i] == -1) {
+				if (index[j] == -1) {
 					m = j;
 					break;
 				}
@@ -42,6 +44,7 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 			}
 
 			if (index[m] == -1) {
+				//printf("here i = %d\n", i);
 				index[m] = i;
 			} else if (y[i] > y[index[m]]) {
 				index[m] = i;
@@ -54,24 +57,28 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 
 	/* searching the maximun peak */
 	for (int i = 0; i < tuner->peak_number; i++) {
-		if ((index[i] |= -1) && (x[index[i]] > max)) {
+		if ((index[i] != -1) && (x[index[i]] > max)) {
 			max = x[index[i]];
 			max_index = index[i];
 		}
 	}
+	//printf("index = [%d, %d, %d]\n", index[0], index[1], index[2]);
 
 	if (max_index != -1) {
+		//printf("aqui .........................\n");
 		for (int i = 0; i < tuner->peak_number; i++) {
 			if (index[i] == -1 || (rejection_relation * x[index[i]] < max)) {
 				index[i] = n;
 			}
 		}
 
-		for (int i = 0, j = 0; j < tuner->peak_number; j++) {
-			if (index[j] < index[i]) {
-				peak = index[i];
+		//printf("index = [%d, %d, %d]\n", index[0], index[1], index[2]);
+		for (int m = 0, j = 0; j < tuner->peak_number; j++) {
+			if (index[j] < index[m]) {
+				m = j;
 			}
 		}
+		peak = index[m];
 	} else {
 		peak = n;
 	}

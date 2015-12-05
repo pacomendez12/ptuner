@@ -2,6 +2,7 @@
 #include <util/array.h>
 #include <util/complex.h>
 #include <tuner/tuner.h>
+#include <fft/fft.h>
 
 
 int main(int argc, char * argv[])
@@ -22,9 +23,29 @@ int main(int argc, char * argv[])
 
 	//z = x + y;
 	//std::cout << z.toString();
+	//
+	//
+	/*
+	double buffer[512];
+	complex comp[512];
+	Tuner t;
+	Fft * fft = new Fft(&t);
+
+	for (int i = 0; i < 512; i++) {
+		buffer[i] = i + 1;
+	}
+
+	fft->fft(buffer, comp, 512);
+
+	for (int i = 0; i < 512; i++) {
+		printf("[%lf, %lf]\n", comp[i].real, comp[i].imag);
+	}
+
+	
+	return 0;*/
 	Tuner tuner;
 	tuner.startTuning();
-	double * arr =	tuner.getProcessedArray();
+	double * arr = tuner.getProcessedArray();
 	/* copy arr to other array because it will change */
 	sleep(2);
 	return 0;

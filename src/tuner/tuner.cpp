@@ -81,23 +81,30 @@ Tuner::findFrequency()
 		complete_buffer_with_window[i] =
 			complete_buffer[complete_buffer_size - fft_size + i] * han_fft[i];
 	}
+	//printf("complete_buffer_size = %d\n", complete_buffer_size);
+
+	for (int i = 0; i < 512; i++) {
+		if (i < 256)
+			complete_buffer_with_window[i] = 10 + i;
+		else
+			complete_buffer_with_window[i] = 10 + i;
+	}
 
 	/* do fft */
 	fft->fft(complete_buffer_with_window, complex_buffer, fft_size);
 
-	for (int i = 0; i < fft_size / 2; i++) {
+	for (int i = 0; i < (fft_size / 2); i++) {
 		fft_spd_buffer[i] = (complex_buffer[i].real * complex_buffer[i].real +
 				complex_buffer[i].imag * complex_buffer[i].imag) * _1_n2;
 	}
 
-	
 	/* copying representable data (that could be in a chart */
-	memcpy(representable_data, fft_spd_buffer, fft_size / 2 * sizeof(double));
+	/*memcpy(representable_data, fft_spd_buffer, fft_size / 2 * sizeof(double));*/
 
 	/* I thing the nerual network will use representable data        ****** */ 
 
 	fft_spd_diff_buffer[0] = 0.0;
-	for (int i = 1; i < fft_size / 2 - 1; i++) {
+	for (int i = 1; i < (fft_size / 2) - 1; i++) {
 		fft_spd_diff_buffer[i] = 2.0 * fft_spd_buffer[i] - fft_spd_buffer[i - 1] -
 			fft_spd_buffer[i + 1];
 		if (fft_spd_diff_buffer[i] < 0) {
@@ -113,6 +120,7 @@ Tuner::findFrequency()
 	int m = signal->get_fundamental_peak(fft_spd_buffer,
 										fft_spd_diff_buffer, fft_size / 2);
 	std::cout << "M = " << m << endl;
+	exit(0);
 	double w = (m - 1) * delta_fft;
 
 	if (m == (signed) fft_size / 2) {
@@ -163,7 +171,7 @@ Tuner::findFrequency()
 
 		w = wkm1;
 		frequency = (w * sample_rate) / (2.0 * M_PI * oversampling);
-		printf("Freq = %lf\n", frequency);
+	//	printf("Freq = %lf\n", frequency);
 	}
 
 }
@@ -263,6 +271,12 @@ Tuner::~Tuner()
 	tunerPtr = NULL;
 }
 
+double *
+Tuner::getProcessedArray() {
+	/* copying representable data (that could be in a chart */
+	memcpy(representable_data, fft_spd_buffer, fft_size / 2 * sizeof(double));
+	return representable_data;
+}
 
 void
 Tuner::startTuning()

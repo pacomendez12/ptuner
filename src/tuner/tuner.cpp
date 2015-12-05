@@ -120,7 +120,6 @@ Tuner::findFrequency()
 	int m = signal->get_fundamental_peak(fft_spd_buffer,
 										fft_spd_diff_buffer, fft_size / 2);
 	std::cout << "M = " << m << endl;
-	exit(0);
 	double w = (m - 1) * delta_fft;
 
 	if (m == (signed) fft_size / 2) {

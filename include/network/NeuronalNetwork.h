@@ -21,6 +21,8 @@ class NeuronalNetwork{
 		int totalInputs;
 		int hiddenLayerSize;
 		int minEpochsApplied;
+		int hits;
+		int epochs;
 		double learningRate;
 		vector< vector<double>  >  inputHiddenWeightsVector;
 		vector<double> hiddenOutputWeightsVector;

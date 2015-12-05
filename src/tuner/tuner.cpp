@@ -83,15 +83,16 @@ Tuner::findFrequency()
 	}
 	//printf("complete_buffer_size = %d\n", complete_buffer_size);
 
-	for (int i = 0; i < 512; i++) {
+	for (int i = 0, j = 0; i < 512; i++) {
 		if (i < 256)
 			complete_buffer_with_window[i] = 10 + i;
 		else
-			complete_buffer_with_window[i] = 10 + i;
+			complete_buffer_with_window[i] = 10 - j--;
 	}
 
 	/* do fft */
 	fft->fft(complete_buffer_with_window, complex_buffer, fft_size);
+	//printf("[%lf, %lf]", complex_buffer[0].real, complex_buffer[0].imag);
 
 	for (int i = 0; i < (fft_size / 2); i++) {
 		fft_spd_buffer[i] = (complex_buffer[i].real * complex_buffer[i].real +
@@ -111,8 +112,8 @@ Tuner::findFrequency()
 			fft_spd_diff_buffer[i] = 0.0;
 		}
 	}
-	/*for (int i = 0; i < 10; i++) {
-		printf("%lf ", fft_spd_diff_buffer[i]);
+	/*for (int i = 0; i < 256; i++) {
+		printf("%lf ", fft_spd_buffer[i]);
 	}
 	cout << endl << endl;*/
 
@@ -120,6 +121,7 @@ Tuner::findFrequency()
 	int m = signal->get_fundamental_peak(fft_spd_buffer,
 										fft_spd_diff_buffer, fft_size / 2);
 	std::cout << "M = " << m << endl;
+	exit(0);
 	double w = (m - 1) * delta_fft;
 
 	if (m == (signed) fft_size / 2) {

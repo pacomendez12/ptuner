@@ -1,5 +1,8 @@
 #include <iostream>
 #include <gui/ProyectImplementation.h>
+#include <tuner/tuner.h>
+
+using namespace std;
 
 Interface::Interface() 
 : 
@@ -15,8 +18,10 @@ Interface::Interface()
   m_VScale(m_adjustment, Gtk::ORIENTATION_HORIZONTAL),
   recordSampleBtn("Record sample"),
   cleanTrainingBtn("Clean samples"),
-  startTrainingBtn("Start Training"){
-
+  startTrainingBtn("Start Training"),
+  textMutex()
+{
+  tuner = new Tuner();
   this->nnTrained = 0;
 
   set_title("Identifying sounds and instruments");
@@ -33,7 +38,8 @@ Interface::Interface()
   Glib::RefPtr<Gtk::TextBuffer> noteBuffer = noteTxtView->get_buffer();
   noteBuffer->set_text ("Note: ");
 
-  Gtk::TextView *noteSelectedTxtView = new Gtk::TextView;
+  //Gtk::TextView *noteSelectedTxtView = new Gtk::TextView;
+  noteSelectedTxtView = new Gtk::TextView;
   noteSelectedBuffer = noteSelectedTxtView ->get_buffer();
   noteSelectedBuffer->set_text ("Do");
 
@@ -139,10 +145,15 @@ Interface::Interface()
   createTestTM();
   createTestReal();
 
+  tuner->gui = this;
   show_all_children();
 }
 
-Interface::~Interface(){}
+Interface::~Interface(){
+	if (tuner != NULL) {
+		delete tuner;
+	}
+}
 
 void Interface::quitBtnPressed(){
   hide();
@@ -151,6 +162,7 @@ void Interface::quitBtnPressed(){
 void
 Interface::startRecordingBtnPressed(){
   printf("Start recording pressed\n");
+  tuner->startTuning();
 }
 
 void Interface::changeNote(){
@@ -209,14 +221,14 @@ void Interface::recordSample(){
   }
 
   //Start recording
-  tuner.startTuning();
-  double * arr = tuner.getProcessedArray();
+  tuner->startTuning();
+  double * arr = tuner->getProcessedArray();
   vector<int> v(arr, arr + 256);
   int vSize = v.size();
   printf("vector v size: %d\n",vSize);
 
   //TODO: check if it working
-  tuner.stopTuning();
+  tuner->stopTuning();
 
 
   //Declaracion de las clases

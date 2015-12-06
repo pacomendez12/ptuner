@@ -11,12 +11,15 @@
 #include <fstream>
 #include <iomanip>
 #include <network/NeuronalNetwork.h>
-#include <tuner/tuner.h>
+//#include <tuner/tuner.h>
+//
+
+class Tuner;
 
 class Interface : public Gtk::Window{
   public:
     Interface();
-    virtual ~Interface();
+    ~Interface();
 
     //GUI
     
@@ -28,6 +31,10 @@ class Interface : public Gtk::Window{
     Glib::RefPtr<Gtk::TextBuffer> hitsBuffer;
     Glib::RefPtr<Gtk::TextBuffer> epochsBuffer;
     Glib::RefPtr<Gtk::TextBuffer> errorBuffer;
+
+
+	//dfdf
+	Gtk::TextView * noteSelectedTxtView;
   	
     // Child widgets:
     
@@ -55,13 +62,24 @@ class Interface : public Gtk::Window{
     int nnTrained;
 
     NeuronalNetwork *neuronalNetwork;
-    Tuner tuner;
+    Tuner * tuner;
     vector < vector <int> > trainingMatrix;
     vector < vector <int> > realMatrix;
     vector<int> results;
     vector < vector <int> > container;
 
+	void changeNoteString(string s) {
+		Glib::Threads::Mutex::Lock lock(textMutex);
+		noteSelectedBuffer = noteSelectedTxtView->get_buffer();
+		noteSelectedBuffer->set_text(s);
+	}
+
+
 	private:
+	mutable Glib::Threads::Mutex textMutex;
+
+
+
   	// Signal handlers methods
   	void quitBtnPressed();
   	void startRecordingBtnPressed();

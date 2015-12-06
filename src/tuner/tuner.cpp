@@ -4,6 +4,7 @@
 #include <fft/fft.h>
 #include <util/array.h>
 #include <util/mem.h>
+//#include <gui/ProyectImplementation.h>
 
 static Tuner * tunerPtr;
 
@@ -61,7 +62,6 @@ Tuner::decimate()
 	int data_size = sound_system_buffer_size;
 	int dec_out_len = 1 + (data_size - (dii + 1)) / oversampling;
 
-	buffer_mutex.lock();
 
 	if (complete_buffer_size > dec_out_len) {
 		/* once que have de new data it needs to reorganize it,
@@ -90,18 +90,19 @@ Tuner::decimate()
 		memcpy(complete_buffer + complete_buffer_size - dec_out_len,
 								buffer, dec_out_len * sizeof(double));
 	}
-	buffer_mutex.unlock();
 }
 
 void
 Tuner::findFrequency()
 {
+	buffer_mutex.lock();
 	/* applying window */
 	for (int i = 0; i < fft_size; i++) {
 		complete_buffer_with_window[i] =
 			complete_buffer[complete_buffer_size -
 										fft_size + i] * han_fft[i];
 	}
+	buffer_mutex.unlock();
 
 	/* do fft */
 	fft->fft(complete_buffer_with_window, complex_buffer, fft_size);
@@ -177,12 +178,15 @@ Tuner::findFrequency()
 		}
 		w = wkm1;
 		frequency = (w * sample_rate) / (2.0 * M_PI * oversampling);
-		//printf("Freq = %lf\n", frequency);
+		printf("Freq = %lf, ", frequency);
 
 
 		std::string note_string = getNoteFromFrequency(frequency);
 		 double error = getErrorFromFrequency(frequency);
-		 cout << "Note: " << note_string << endl;
+		 cout << "Note: " << note_string << ", Error: "<< error << endl;
+		 sleep(0.5);
+		 gui->changeNoteString(note_string);
+		 //gui->noteSelectedBuffer->set_text(note_string);
 	}
 
 }
@@ -228,7 +232,7 @@ Tuner::Tuner(s_system_t sst)
 	fft_spd_buffer = new double[fft_size / 2]();
 	fft_spd_diff_buffer = new double[fft_size]();
 	spd_dft = new double[dft_size]();
-	representable_data = new double[fft_size / 2]();
+	representable_data = new double[fft_size]();
 
 
 	/* enable filter by default */
@@ -304,9 +308,10 @@ Tuner::~Tuner()
 
 double *
 Tuner::getProcessedArray() {
+	buffer_mutex.lock();
 	/* copying representable data (that could be in a chart */
-	memcpy(representable_data, fft_spd_buffer, fft_size /
-												2 * sizeof(double));
+	memcpy(representable_data, complete_buffer_with_window, fft_size / sizeof(double));
+	buffer_mutex.unlock();
 	return representable_data;
 }
 
@@ -326,13 +331,14 @@ Tuner::stopTuning()
 }
 
 
-std::string
-Tuner::getNoteFromFrequency(double f)
+void
+Tuner::calculateNoteAndFrequency(double f)
 {
 	const double inc = 1.0 / 12.0;
 	const double offset = 0.0312187306;
 	double log_2_freq = log2(f);
-	int octave = ceil(log2(f));
+	int octave = trunc(log2(f));
+	cout << log_2_freq << " ";
 
 	double diff = log_2_freq - (octave + offset);
 
@@ -345,17 +351,20 @@ Tuner::getNoteFromFrequency(double f)
 	} else {
 		error = note - n;
 	}
-	if (note > 11)
-		printf("ERROR: bad note\n");
-	else 
-		printf("note is = %d\n", (int) note);
-	//return notes[(int)note];
-	return "paco";
+}
+
+std::string
+Tuner::getNoteFromFrequency(double f)
+{
+	calculateNoteAndFrequency(f);
+	note_string = ((int)note >= 0 && (int)note <= 11)?notes[(int)note]: "";
+	return note_string;
 }
 
 
 double
-Tuner::getErrorFromFrequency(double frequency)
+Tuner::getErrorFromFrequency(double f)
 {
-	return 0.0;
+	calculateNoteAndFrequency(f);
+	return error;
 }

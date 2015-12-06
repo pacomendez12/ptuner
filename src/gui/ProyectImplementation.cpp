@@ -140,6 +140,7 @@ Interface::Interface()
   startTrainingBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::trainNeuronalNetwork) );
   indentifyInstrumentBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::evaluateForRealSamples) );
   loadNetworkBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::importTrainedNeuronalNetwork) );
+  m_Dispatcher.connect(sigc::mem_fun(*this, &Interface::notification));
 
   initNeuronalNetworkFunctionality();
   createTestTM();
@@ -153,6 +154,13 @@ Interface::~Interface(){
 	if (tuner != NULL) {
 		delete tuner;
 	}
+}
+
+void Interface::notification()
+{
+	Glib::Threads::Mutex::Lock lock(textMutex);
+	noteSelectedBuffer = noteSelectedTxtView->get_buffer();
+	noteSelectedBuffer->set_text(note);
 }
 
 void Interface::quitBtnPressed(){

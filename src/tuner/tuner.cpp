@@ -178,14 +178,13 @@ Tuner::findFrequency()
 		}
 		w = wkm1;
 		frequency = (w * sample_rate) / (2.0 * M_PI * oversampling);
-		printf("Freq = %lf, ", frequency);
+		//printf("Freq = %lf, ", frequency);
 
 
 		std::string note_string = getNoteFromFrequency(frequency);
 		 double error = getErrorFromFrequency(frequency);
-		 cout << "Note: " << note_string << ", Error: "<< error << endl;
-		 sleep(0.5);
-		 gui->changeNoteString(note_string);
+		 //cout << "Note: " << note_string << ", Error: "<< error << endl;
+		 //gui->changeNoteString(note_string);
 		 //gui->noteSelectedBuffer->set_text(note_string);
 	}
 
@@ -310,7 +309,7 @@ double *
 Tuner::getProcessedArray() {
 	buffer_mutex.lock();
 	/* copying representable data (that could be in a chart */
-	memcpy(representable_data, complete_buffer_with_window, fft_size / sizeof(double));
+	memcpy(representable_data, complete_buffer_with_window, fft_size * sizeof(double));
 	buffer_mutex.unlock();
 	return representable_data;
 }
@@ -338,7 +337,7 @@ Tuner::calculateNoteAndFrequency(double f)
 	const double offset = 0.0312187306;
 	double log_2_freq = log2(f);
 	int octave = trunc(log2(f));
-	cout << log_2_freq << " ";
+	//cout << log_2_freq << " ";
 
 	double diff = log_2_freq - (octave + offset);
 

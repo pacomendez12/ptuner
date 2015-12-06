@@ -79,16 +79,17 @@ class Interface : public Gtk::Window{
     vector<int> resultsViolin;
     vector<int> resultsBass;
     vector < vector <int> > container;
+	std::string note;
 
 	void changeNoteString(string s) {
-		Glib::Threads::Mutex::Lock lock(textMutex);
-		noteSelectedBuffer = noteSelectedTxtView->get_buffer();
-		noteSelectedBuffer->set_text(s);
+		note = s;
+		m_Dispatcher.emit();
 	}
 
 
 	private:
 	mutable Glib::Threads::Mutex textMutex;
+	Glib::Dispatcher m_Dispatcher;
 
 
 
@@ -111,6 +112,7 @@ class Interface : public Gtk::Window{
     void importTrainedNeuronalNetwork();
     void initNeuronalNetworkFunctionality();
     void exportTrainedNeuronalNetwork();
+	void notification();
 };
 
 #endif /* GTKMM_EXAMPLEWINDOW_H */

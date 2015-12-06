@@ -184,7 +184,11 @@ Tuner::findFrequency()
 		std::string note_string = getNoteFromFrequency(frequency);
 		 double error = getErrorFromFrequency(frequency);
 		 //cout << "Note: " << note_string << ", Error: "<< error << endl;
-		 //gui->changeNoteString(note_string);
+		 DisplayData data;
+		 data.note = note_string;
+		 data.error = error;
+		 data.str = "";
+		 gui->changeDisplayValues(data);
 		 //gui->noteSelectedBuffer->set_text(note_string);
 	}
 
@@ -263,18 +267,18 @@ Tuner::Tuner(s_system_t sst)
 
 
 	/* initialize notes vector */
-	notes[0] = "Do";
-	notes[1] = "Do #";
-	notes[2] = "Re";
-	notes[3] = "Re #";
-	notes[4] = "Mi";
-	notes[5] = "Fa";
-	notes[6] = "Fa #";
-	notes[7] = "Sol";
+	notes[0] = "Do   ";
+	notes[1] = "Do # ";
+	notes[2] = "Re   ";
+	notes[3] = "Re # ";
+	notes[4] = "Mi   ";
+	notes[5] = "Fa   ";
+	notes[6] = "Fa # ";
+	notes[7] = "Sol  ";
 	notes[8] = "Sol #";
-	notes[9] = "La";
-	notes[10] = "La #";
-	notes[11] = "Si";
+	notes[9] = "La   ";
+	notes[10] = "La # ";
+	notes[11] = "Si   ";
 
 
 	/* global Tuner ptr have to be able to call the 

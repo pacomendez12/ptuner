@@ -16,6 +16,12 @@
 
 class Tuner;
 
+struct DisplayData {
+	std::string note;
+	double error;
+	std::string str;
+};
+
 class Interface : public Gtk::Window{
   public:
     Interface();
@@ -67,10 +73,9 @@ class Interface : public Gtk::Window{
     vector < vector <int> > realMatrix;
     vector<int> results;
     vector < vector <int> > container;
-	std::string note;
 
-	void changeNoteString(string s) {
-		note = s;
+	void changeDisplayValues(DisplayData d) {
+		data = d;
 		m_Dispatcher.emit();
 	}
 
@@ -78,6 +83,7 @@ class Interface : public Gtk::Window{
 	private:
 	mutable Glib::Threads::Mutex textMutex;
 	Glib::Dispatcher m_Dispatcher;
+	DisplayData data;
 
 
 

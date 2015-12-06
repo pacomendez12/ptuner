@@ -160,7 +160,7 @@ void Interface::notification()
 {
 	Glib::Threads::Mutex::Lock lock(textMutex);
 	noteSelectedBuffer = noteSelectedTxtView->get_buffer();
-	noteSelectedBuffer->set_text(note);
+	noteSelectedBuffer->set_text(data.note);
 }
 
 void Interface::quitBtnPressed(){

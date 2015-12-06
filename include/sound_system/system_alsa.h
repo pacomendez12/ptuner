@@ -72,7 +72,9 @@ private:
 };
 
 	/* TODO try to keep this value inside the class */
-	const static unsigned int alsa_valid_rates[] = { 8000, 11025, 22050, 44100, 48000 };
+	const static unsigned int alsa_valid_rates[] = {
+		8000, 11025, 22050, 44100, 48000
+	};
 
 //constexpr const unsigned int system_alsa::alsa_valid_rates[1];
 #endif /* end of include guard: SYSTEM_H */

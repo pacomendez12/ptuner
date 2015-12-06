@@ -21,7 +21,7 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 	unsigned int min_frequency = 15.0; /* Hz */
 
 	unsigned int low_index = (unsigned int) ceil(min_frequency *
-			(1.0 * tuner->oversampling / tuner->sample_rate) * tuner->fft_size);
+	(1.0 * tuner->oversampling / tuner->sample_rate) * tuner->fft_size);
 
 	if (low_index < peak_half_width) {
 		low_index = peak_half_width;
@@ -62,7 +62,8 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 
 	if (max_index != -1) {
 		for (int i = 0; i < tuner->peak_number; i++) {
-			if (index[i] == -1 || (rejection_relation * x[index[i]] < max)) {
+			if (index[i] == -1 ||
+						(rejection_relation * x[index[i]] < max)) {
 				index[i] = n;
 			}
 		}

@@ -22,8 +22,8 @@ Fft::~Fft()
 
 
 void
-Fft::fft_rec(double * in, complex * out, unsigned int n, unsigned int offset,
-		unsigned int d1, unsigned int step)
+Fft::fft_rec(double * in, complex * out, unsigned int n,
+			unsigned int offset, unsigned int d1, unsigned int step)
 {
 	complex x1, x2;
 	unsigned long np2 = n / 2;
@@ -63,7 +63,8 @@ Fft::fft(double * in, complex * out, unsigned int n)
 
 
 void
-Fft::fft_spd(double * in, int n1, double wi, double dw, double * out, int n2)
+Fft::fft_spd(double * in, int n1, double wi, double dw,
+												double * out, int n2)
 {
 	double real, imag;
 	double wn;
@@ -82,7 +83,8 @@ Fft::fft_spd(double * in, int n1, double wi, double dw, double * out, int n2)
 
 
 void
-Fft::fft_spd_diff(double * in, int N, double w, double & out_d1, double & out_d2)
+Fft::fft_spd_diff(double * in, int N, double w, double & out_d1,
+													double & out_d2)
 {
 	double cos_wn, sin_wn;
 
@@ -111,6 +113,7 @@ Fft::fft_spd_diff(double * in, int N, double w, double & out_d1, double & out_d2
 	out_d1 = 2.0 * 
 		(sum_sin_wn * n_sum_cos_wn - sum_cos_wn * n_sum_sin_wn) / n2;
 
-	out_d2 = 2.0 * (n_sum_cos_wn * n_sum_cos_wn - sum_sin_wn * n2_sum_sin_wn +
-			n_sum_sin_wn * n_sum_sin_wn - sum_cos_wn * n2_sum_cos_wn) / n2;
+	out_d2 = 2.0 * (n_sum_cos_wn * n_sum_cos_wn -
+		sum_sin_wn * n2_sum_sin_wn + n_sum_sin_wn * n_sum_sin_wn -
+		sum_cos_wn * n2_sum_cos_wn) / n2;
 }

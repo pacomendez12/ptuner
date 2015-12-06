@@ -66,14 +66,16 @@ Tuner::decimate()
 	if (complete_buffer_size > dec_out_len) {
 		/* once que have de new data it needs to reorganize it,
 		   and memmove is perfect for this task */
-		unsigned int size_data_moved = (complete_buffer_size - dec_out_len);
+		unsigned int size_data_moved =
+								(complete_buffer_size - dec_out_len);
 		memmove(complete_buffer, complete_buffer + dec_out_len,
 				size_data_moved * sizeof(double));
 	}
 
 	if (oversampling > 1) {
 		double * in = buffer;
-		double * out = complete_buffer + (complete_buffer_size - dec_out_len);
+		double * out = complete_buffer +
+								(complete_buffer_size - dec_out_len);
 
 		/* filtering data */
 		/* the input is also de output for the filter */
@@ -85,8 +87,8 @@ Tuner::decimate()
 		}
 		dii -= data_size;
 	} else {
-		memcpy(complete_buffer + complete_buffer_size - dec_out_len, buffer,
-				dec_out_len * sizeof(double));
+		memcpy(complete_buffer + complete_buffer_size - dec_out_len,
+								buffer, dec_out_len * sizeof(double));
 	}
 	buffer_mutex.unlock();
 }
@@ -97,24 +99,27 @@ Tuner::findFrequency()
 	/* applying window */
 	for (int i = 0; i < fft_size; i++) {
 		complete_buffer_with_window[i] =
-			complete_buffer[complete_buffer_size - fft_size + i] * han_fft[i];
+			complete_buffer[complete_buffer_size -
+										fft_size + i] * han_fft[i];
 	}
 
 	/* do fft */
 	fft->fft(complete_buffer_with_window, complex_buffer, fft_size);
 
 	for (int i = 0; i < (fft_size / 2); i++) {
-		fft_spd_buffer[i] = (complex_buffer[i].real * complex_buffer[i].real +
-				complex_buffer[i].imag * complex_buffer[i].imag) * _1_n2;
+		fft_spd_buffer[i] =
+			(complex_buffer[i].real * complex_buffer[i].real +
+			complex_buffer[i].imag * complex_buffer[i].imag) * _1_n2;
 	}
 
 	/* copying representable data (that could be in a chart */
-	/*memcpy(representable_data, fft_spd_buffer, fft_size / 2 * sizeof(double));*/
+	/*memcpy(representable_data, fft_spd_buffer, fft_size /
+												2 * sizeof(double));*/
 
 	fft_spd_diff_buffer[0] = 0.0;
 	for (int i = 1; i < (fft_size / 2) - 1; i++) {
-		fft_spd_diff_buffer[i] = 2.0 * fft_spd_buffer[i] - fft_spd_buffer[i - 1] -
-			fft_spd_buffer[i + 1];
+		fft_spd_diff_buffer[i] = 2.0 * fft_spd_buffer[i] -
+				fft_spd_buffer[i - 1] - fft_spd_buffer[i + 1];
 		if (fft_spd_diff_buffer[i] < 0) {
 			fft_spd_diff_buffer[i] = 0.0;
 		}
@@ -122,7 +127,7 @@ Tuner::findFrequency()
 
 	/* look for peak */
 	int m = signal->get_fundamental_peak(fft_spd_buffer,
-										fft_spd_diff_buffer, fft_size / 2);
+									fft_spd_diff_buffer, fft_size / 2);
 	double w = (m - 1) * delta_fft;
 
 	if (m == (signed) fft_size / 2) {
@@ -136,13 +141,13 @@ Tuner::findFrequency()
 		for (int k = 0; k < n_dft; k++) {
 			dw = 2.0 * dw / (dft_size - 1);
 			if (0 == k) {
-				fft->fft_spd(complete_buffer_with_window, fft_size, w + dw, dw,
-						spd_dft + 1, dft_size - 2);
+				fft->fft_spd(complete_buffer_with_window, fft_size,
+							w + dw, dw, spd_dft + 1, dft_size - 2);
 				spd_dft[0] = spd_dft[m - 1];
 				spd_dft[dft_size - 1] = fft_spd_buffer[m + 1];
 			} else {
-				fft->fft_spd(complete_buffer_with_window, fft_size, w, dw,
-						spd_dft, dft_size);
+				fft->fft_spd(complete_buffer_with_window, fft_size,
+							w, dw,spd_dft, dft_size);
 			}
 
 			m = signal->get_max(spd_dft, dft_size);
@@ -166,7 +171,8 @@ Tuner::findFrequency()
 		for (int k = 0; (k < n_iter) && fabs(wk - wkm1) > 1.0e-8; k++) {
 			wk = wkm1;
 
-			fft->fft_spd_diff(windowed_buffer, complete_buffer_size, wk, d1, d2);
+			fft->fft_spd_diff(windowed_buffer, complete_buffer_size,
+															wk, d1, d2);
 			wkm1 = wk - d1 / d2;
 		}
 		w = wkm1;
@@ -188,9 +194,10 @@ Tuner::Tuner(s_system_t sst)
 	/* get real values from sound system */
 	sound_system_buffer_size = sound->getSoundSystemBufferSize();
 	sample_rate = sound->getSampleRate();
-	oversampling = DEFAULT_OVERSAMPLING; // we need to use a variable here;
+	oversampling = DEFAULT_OVERSAMPLING; //should use a variable here;
 	peak_number = 3;
-	downsample = DEFAULT_DOWNSAMPLE;
+	//downsample = DEFAULT_DOWNSAMPLE;
+	downsample = 15;
 	dft_size = DEFAULT_DFT_SIZE;
 	time_window = 0.5; /* 0.5 seconds */
 	complete_buffer_size = (unsigned int) ceil(sample_rate * 
@@ -212,7 +219,7 @@ Tuner::Tuner(s_system_t sst)
 	complete_buffer_with_window = new double[fft_size]();
 	buffer = new double[sound_system_buffer_size]();
 	han_fft = new double[fft_size]();
-	complex_buffer = new complex[fft_size](); // i'm not sure about size
+	complex_buffer = new complex[fft_size]();
 	fft_spd_buffer = new double[fft_size / 2]();
 	fft_spd_diff_buffer = new double[fft_size]();
 	spd_dft = new double[dft_size]();
@@ -232,15 +239,18 @@ Tuner::Tuner(s_system_t sst)
 	/* Han window */
 	for (int i = 0; i < complete_buffer_size; i++) {
 		/* han */
-//		hanWindow[i] = 0.5 * (1 - cos(2 * M_PI * i / (complete_buffer_size - 1.0)));
+//		hanWindow[i] = 0.5 * (1 - cos(2 * M_PI * i /
+//										(complete_buffer_size - 1.0)));
 		/* hamming */
-		hanWindow[i] = 0.53836 - 0.46164 * cos((2 * M_PI * i) / (complete_buffer_size - 1.0));
+		hanWindow[i] = 0.53836 - 0.46164 * cos((2 * M_PI * i) /
+										(complete_buffer_size - 1.0));
 	}
 
 	/* Han for fft */
 	for (int i = 0; i < fft_size; i++) {
 		//han_fft[i] = 0.5 * (1 - cos(2 * M_PI * i / (fft_size - 1.0)));
-		han_fft[i] = 0.53836 - 0.46164 * cos((2 * M_PI * i) / (fft_size - 1.0));
+		han_fft[i] = 0.53836 - 0.46164 * cos((2 * M_PI * i) /
+													(fft_size - 1.0));
 	}
 
 	/* global Tuner ptr have to be able to call the 
@@ -274,7 +284,8 @@ Tuner::~Tuner()
 double *
 Tuner::getProcessedArray() {
 	/* copying representable data (that could be in a chart */
-	memcpy(representable_data, fft_spd_buffer, fft_size / 2 * sizeof(double));
+	memcpy(representable_data, fft_spd_buffer, fft_size /
+												2 * sizeof(double));
 	return representable_data;
 }
 

@@ -122,7 +122,7 @@ Interface::Interface()
   rightGrid.attach(*errorTxtView,1,7,1,1);
   
   //Events
-  startRecordingBtn.signal_clicked().connect(sigc::bind<Glib::ustring>( sigc::mem_fun(*this, &Interface::startRecordingBtnPressed), "Start recording") );
+  startRecordingBtn.signal_clicked().connect(sigc::mem_fun(*this, &Interface::startRecordingBtnPressed));
   changeNoteBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::changeNote));
   changeStringBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::changeString));
   changeTunerBtn.signal_clicked().connect(sigc::mem_fun(*this,&Interface::changeScrollbar));
@@ -149,8 +149,8 @@ void Interface::quitBtnPressed(){
 }
 
 void
-Interface::startRecordingBtnPressed(const Glib::ustring& data){
-  std::cout << data << " was pressed" << std::endl;
+Interface::startRecordingBtnPressed(){
+  printf("Start recording pressed\n");
 }
 
 void Interface::changeNote(){
@@ -208,6 +208,17 @@ void Interface::recordSample(){
     return;
   }
 
+  //Start recording
+  tuner.startTuning();
+  double * arr = tuner.getProcessedArray();
+  vector<int> v(arr, arr + 256);
+  int vSize = v.size();
+  printf("vector v size: %d\n",vSize);
+
+  //TODO: check if it working
+  tuner.stopTuning();
+
+
   //Declaracion de las clases
   Glib::ustring text = classCombo.get_active_text();
   
@@ -218,6 +229,8 @@ void Interface::recordSample(){
   if(text.compare("Chelo") == 0){
     results.push_back(1);
   }
+
+  //TODO: Agregar la otra clase que vamos a empezar a analizar
 
   //TODO:Aqui es donde vamos a mandar a llamar la parte de grabar
   vector<int> currentVector = container[trainingMatrixSize];
@@ -375,17 +388,7 @@ void Interface::importTrainedNeuronalNetwork(){
   infile.open("network-data.dat"); 
 
   double currentWeight = 0.0;
-  /*while (infile >> currentWeight) {
-        weights.push_back(currentWeight);
-  }
-  int weigthsSize = weights.size();
 
-  printf("%d\n",weigthsSize);
-
-  for(int i=0; i<totalWeights; i++){
-    printf("%f\n",weights[i]);
-  }
-  */
   //Export input to hidden weights
   for(int i=0; i<totalInputs; i++){
     for(int h=0; h<hiddenLayerSize;h++){
@@ -403,3 +406,4 @@ void Interface::importTrainedNeuronalNetwork(){
   
   printf("Se termino de exportar los datos\n");
 }
+

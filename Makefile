@@ -20,11 +20,11 @@ system: $(SRC)
 gui: $(GUI_SRC)
 	$(GCC) src/gui/main_app.cpp -o gui -Iinclude/gui `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS)
 
-net: net_make
-	$(GCC) -o net src/MainNeuronalNetwork.cpp $(OBJ) -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS_BIN)
+net: net_make system
+	$(GCC) -o net src/MainNeuronalNetwork.cpp $(OBJ) -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS_BIN) $(LIBS)
 
 net_make: $(NET_SRC)
-	$(GCC) -c $^ -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS)
+	$(GCC) -c $^ -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS) $(LIBS)
 
 clean:
 	rm -f *.o main

@@ -11,12 +11,15 @@
 #include <fstream>
 #include <iomanip>
 #include <network/NeuronalNetwork.h>
+#include <tuner/tuner.h>
 
 class Interface : public Gtk::Window{
   public:
     Interface();
     virtual ~Interface();
 
+    //GUI
+    
     //Buffers
   	Glib::RefPtr<Gtk::TextBuffer> noteSelectedBuffer;
   	Glib::RefPtr<Gtk::TextBuffer> stringSelectedBuffer;
@@ -25,10 +28,24 @@ class Interface : public Gtk::Window{
     Glib::RefPtr<Gtk::TextBuffer> hitsBuffer;
     Glib::RefPtr<Gtk::TextBuffer> epochsBuffer;
     Glib::RefPtr<Gtk::TextBuffer> errorBuffer;
-  		
-  	//Scrollbar
+  	
+    // Child widgets:
+    
+    //Scrollbar
   	Glib::RefPtr<Gtk::Adjustment> m_adjustment;
   	Gtk::Scale m_VScale;
+  
+    //Grids
+    Gtk::Grid interfaceGrid;
+    Gtk::Grid leftGrid;
+    Gtk::Grid rightGrid;
+
+    //Combo
+    Gtk::ComboBoxText classCombo;
+
+    // Buttons
+    Gtk::Button startRecordingBtn, indentifyInstrumentBtn, loadNetworkBtn, changeNoteBtn, changeStringBtn, changeTunerBtn, changeInstumentBtn, quitBtn,
+                  recordSampleBtn, cleanTrainingBtn, startTrainingBtn;
 
     //Functionality
     int inputs;
@@ -38,26 +55,21 @@ class Interface : public Gtk::Window{
     int nnTrained;
 
     NeuronalNetwork *neuronalNetwork;
-    //No se va a inicializar hasta que se mande a llamar
+    Tuner tuner;
     vector < vector <int> > trainingMatrix;
     vector < vector <int> > realMatrix;
-    //No se va a inicializar hasta que se mande a llamar
     vector<int> results;
-
     vector < vector <int> > container;
 
-    void initNeuronalNetworkFunctionality();
-
 	private:
-  	// Signal handlers:
+  	// Signal handlers methods
   	void quitBtnPressed();
-  	void startRecordingBtnPressed(const Glib::ustring& data);
+  	void startRecordingBtnPressed();
   	void changeNote();
   	void changeString();
   	void changeInstrument();
   	void changeScrollbar();
     void classChanged();
-
     void cleanSamples();
     void recordSample();
     void createTestTM();
@@ -66,22 +78,9 @@ class Interface : public Gtk::Window{
     void printClasses();
     void trainNeuronalNetwork();
     void evaluateForRealSamples();
-    void exportTrainedNeuronalNetwork();
     void importTrainedNeuronalNetwork();
-
-  	// Child widgets:
-  		
-  	// Grids
-  	Gtk::Grid interfaceGrid;
-    Gtk::Grid leftGrid;
-    Gtk::Grid rightGrid;
-
-    //Combo
-    Gtk::ComboBoxText classCombo;
-
-  	// Buttons
-  	Gtk::Button startRecordingBtn, indentifyInstrumentBtn, loadNetworkBtn, changeNoteBtn, changeStringBtn, changeTunerBtn, changeInstumentBtn, quitBtn,
-                  recordSampleBtn, cleanTrainingBtn, startTrainingBtn;
+    void initNeuronalNetworkFunctionality();
+    void exportTrainedNeuronalNetwork();
 };
 
 #endif /* GTKMM_EXAMPLEWINDOW_H */

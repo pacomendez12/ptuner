@@ -14,8 +14,7 @@ bin: system
 	$(GCC) -o main src/main.cpp $(OBJ) -Iinclude $(FLAGS_BIN) $(LIBS)
 
 system: $(SRC)
-#$(GCC) -o $@ $^ -Iinclude/ $(FLAGS) $(LIBS)
-	$(GCC) -c $^ -Iinclude/ $(FLAGS) $(LIBS)
+	$(GCC) -c $^ -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS) $(LIBS)
 
 gui: $(GUI_SRC)
 	$(GCC) src/gui/main_app.cpp -o gui -Iinclude/gui `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS)

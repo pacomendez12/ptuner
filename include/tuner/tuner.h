@@ -1,6 +1,7 @@
 #include <sound_system/sound_system.h>
 #include <util/complex.h>
 #include <sound_system/definitions.h>
+#include <gui/ProyectImplementation.h>
 #include <tuner/filter.h>
 #include <mutex>
 #include <cmath>
@@ -12,6 +13,7 @@
 
 using namespace Sound_system;
 //using namespace std;
+
 
 
 #define TUNER_DEFAULT_SOUND_SYSTEM ALSA
@@ -32,6 +34,7 @@ enum TunerStatus {
 
 class Fft;
 class Signal;
+//class Interface;
 
 class Tuner {
 	friend class Fft;
@@ -93,10 +96,14 @@ class Tuner {
 	/* after frequency is calculated */
 	double error;
 	double note;
+	std::string note_string;
 	std::string notes[12];
 
 	std::string getNoteFromFrequency(double freq);
 	double getErrorFromFrequency(double freq);
+	void calculateNoteAndFrequency(double freq);
+
+
 
 	public:
 	Tuner();
@@ -122,6 +129,8 @@ class Tuner {
 
 	double * getProcessedArray();
 
+	/* GUI */
+	Interface * gui;
 
 };
 

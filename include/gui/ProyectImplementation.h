@@ -11,18 +11,21 @@
 #include <fstream>
 #include <iomanip>
 #include <network/NeuronalNetwork.h>
-#include <tuner/tuner.h>
+//#include <tuner/tuner.h>
+//
+
+class Tuner;
 
 #define TRAINING_MATRIX_SIZE 24
 #define HIDDEN_LAYER_SIZE 128
-#define TOTAL_INPUTS 256
+#define TOTAL_INPUTS 512
 #define MIN_EPOCHS_APPLY 1000
 #define LEARNING_RATE 1.0
 
 class Interface : public Gtk::Window{
   public:
     Interface();
-    virtual ~Interface();
+    ~Interface();
 
     //GUI
     
@@ -34,6 +37,10 @@ class Interface : public Gtk::Window{
     Glib::RefPtr<Gtk::TextBuffer> hitsBuffer;
     Glib::RefPtr<Gtk::TextBuffer> epochsBuffer;
     Glib::RefPtr<Gtk::TextBuffer> errorBuffer;
+
+
+	//dfdf
+	Gtk::TextView * noteSelectedTxtView;
   	
     // Child widgets:
     
@@ -61,7 +68,7 @@ class Interface : public Gtk::Window{
     int nnTrained;
 
     NeuronalNetwork *neuronalNetwork;
-    Tuner tuner;
+    Tuner * tuner;
     vector < vector <double> > trainingMatrix;
     vector < vector <double> > guitarVector;
     vector < vector <double> > violinVector;
@@ -73,7 +80,18 @@ class Interface : public Gtk::Window{
     vector<int> resultsBass;
     vector < vector <int> > container;
 
+	void changeNoteString(string s) {
+		Glib::Threads::Mutex::Lock lock(textMutex);
+		noteSelectedBuffer = noteSelectedTxtView->get_buffer();
+		noteSelectedBuffer->set_text(s);
+	}
+
+
 	private:
+	mutable Glib::Threads::Mutex textMutex;
+
+
+
   	// Signal handlers methods
   	void quitBtnPressed();
   	void startRecordingBtnPressed();

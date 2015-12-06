@@ -1,5 +1,8 @@
 #include <iostream>
 #include <gui/ProyectImplementation.h>
+#include <tuner/tuner.h>
+
+using namespace std;
 
 Interface::Interface() 
 : 
@@ -15,8 +18,10 @@ Interface::Interface()
   m_VScale(m_adjustment, Gtk::ORIENTATION_HORIZONTAL),
   recordSampleBtn("Record sample"),
   cleanTrainingBtn("Clean samples"),
-  startTrainingBtn("Start Training"){
-
+  startTrainingBtn("Start Training"),
+  textMutex()
+{
+  tuner = new Tuner();
   this->nnTrained = 0;
 
   set_title("Identifying sounds and instruments");
@@ -33,7 +38,8 @@ Interface::Interface()
   Glib::RefPtr<Gtk::TextBuffer> noteBuffer = noteTxtView->get_buffer();
   noteBuffer->set_text ("Note: ");
 
-  Gtk::TextView *noteSelectedTxtView = new Gtk::TextView;
+  //Gtk::TextView *noteSelectedTxtView = new Gtk::TextView;
+  noteSelectedTxtView = new Gtk::TextView;
   noteSelectedBuffer = noteSelectedTxtView ->get_buffer();
   noteSelectedBuffer->set_text ("Do");
 
@@ -139,10 +145,15 @@ Interface::Interface()
   //createTestTM();
   //createTestReal();
 
+  tuner->gui = this;
   show_all_children();
 }
 
-Interface::~Interface(){}
+Interface::~Interface(){
+	if (tuner != NULL) {
+		delete tuner;
+	}
+}
 
 void Interface::quitBtnPressed(){
   hide();
@@ -151,6 +162,7 @@ void Interface::quitBtnPressed(){
 void
 Interface::startRecordingBtnPressed(){
   printf("Start recording pressed\n");
+  tuner->startTuning();
 }
 
 void Interface::changeNote(){
@@ -214,14 +226,24 @@ void Interface::recordSample(){
   }
 
   //Start recording
-  tuner.startTuning();
-  double * arr = tuner.getProcessedArray();
-  vector<double> currentVector(arr, arr + 256);
+  tuner->startTuning();
+  double * arr = tuner->getProcessedArray();
+  //vector<double> currentVector;
+  /*for(int i=0; i<TOTAL_INPUTS; i++){
+    printf("%f,",arr[i]);
+    currentVector.push_back(arr[i]);
+  }
+  printf("eeeeee\n");
+  for(int i=0; i<TOTAL_INPUTS; i++){
+    printf("%f,",currentVector[i]);
+    //currentVector.push_back(arr[i]);
+  }*/
+  vector<double> currentVector(arr, arr + TOTAL_INPUTS);
   int vSize = currentVector.size();
   printf("vector v size: %d\n",vSize);
 
   //TODO: check if it working
-  tuner.stopTuning();
+  tuner->stopTuning();
 
 
   //Declaracion de las clases
@@ -249,51 +271,6 @@ void Interface::recordSample(){
 
   printf("El total de muestras obtenidas es: %d\n", totalAmount);
 }
-
-//For test purposes
-/*
-void Interface::createTestTM(){
-  vector<int> v = {0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0};
-  vector<int> v2 = {1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v3 = {0,1,1,1,0,0,1,1,1,0,0,1,0,1,0,0,1,1,1,0,0,1,1,1,0};
-  vector<int> v4 = {1,0,0,0,1,0,1,1,1,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v5 = {0,0,1,0,0,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,0,0,1,0,0};
-  vector<int> v6 = {1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,1,1,0,1,0,0,0,1};
-  vector<int> v7 = {1,0,0,0,1,0,1,0,1,0,0,1,1,0,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v8 = {1,0,0,0,1,0,1,0,1,0,0,0,1,1,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v9 = {0,1,1,1,0,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,0,1,1,1,0};
-  vector<int> v10 = {1,1,0,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1,0,1,1};
-  vector<int> v11 = {0,1,1,1,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,1,1,1,0};
-  vector<int> v12 = {0,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,0};
-
-  container.push_back(v);
-  container.push_back(v2);
-  container.push_back(v3);
-  container.push_back(v4);
-  container.push_back(v5);
-  container.push_back(v6);
-  container.push_back(v7);
-  container.push_back(v8);
-  container.push_back(v9);
-  container.push_back(v10);
-  container.push_back(v11);
-  container.push_back(v12);
-}
-*/
-
-/*
-void Interface::createTestReal(){
-  vector<int> rv = {0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0,0,1,1,1,0};
-  vector<int> rv2 = {0,1,1,1,0,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,1,1,1,0};
-  vector<int> rv3 = {1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,1};
-  vector<int> rv4 = {1,0,0,0,1,1,1,0,1,1,0,1,1,1,0,0,1,1,1,0,1,1,0,1,1};
-
-  realMatrix.push_back(rv);
-  realMatrix.push_back(rv2);
-  realMatrix.push_back(rv3);
-  realMatrix.push_back(rv4);
-}
-*/
 
 void Interface::printTrainingMatrix(){
   int tmSize = trainingMatrix.size();
@@ -376,8 +353,8 @@ void Interface::evaluateForRealSamples(){
 
 
   printf("Grabando...\n");
-  tuner.startTuning();
-  double * arr = tuner.getProcessedArray();
+  tuner->startTuning();
+  double * arr = tuner->getProcessedArray();
   vector<double> currentVector(arr, arr + 256);
   int vSize = currentVector.size();
   printf("vector v size: %d\n",vSize);

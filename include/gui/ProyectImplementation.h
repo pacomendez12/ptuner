@@ -16,10 +16,10 @@
 class Tuner;
 
 #define TRAINING_MATRIX_SIZE 24
-#define HIDDEN_LAYER_SIZE 128
 #define TOTAL_INPUTS 512
+#define HIDDEN_LAYER_SIZE (TOTAL_INPUTS/2)
 #define MIN_EPOCHS_APPLY 1000
-#define LEARNING_RATE 1.0
+#define LEARNING_RATE 0.01
 
 
 struct DisplayData {

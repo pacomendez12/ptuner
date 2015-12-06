@@ -12,9 +12,15 @@
 #include <iomanip>
 #include <network/NeuronalNetwork.h>
 //#include <tuner/tuner.h>
-//
 
 class Tuner;
+
+#define TRAINING_MATRIX_SIZE 24
+#define HIDDEN_LAYER_SIZE 128
+#define TOTAL_INPUTS 512
+#define MIN_EPOCHS_APPLY 1000
+#define LEARNING_RATE 1.0
+
 
 struct DisplayData {
 	std::string note;
@@ -69,9 +75,15 @@ class Interface : public Gtk::Window{
 
     NeuronalNetwork *neuronalNetwork;
     Tuner * tuner;
-    vector < vector <int> > trainingMatrix;
-    vector < vector <int> > realMatrix;
+    vector < vector <double> > trainingMatrix;
+    vector < vector <double> > guitarVector;
+    vector < vector <double> > violinVector;
+    vector < vector <double> > bassVector;
+    vector < vector <double> > realMatrix;
     vector<int> results;
+    vector<int> resultsGuitar;
+    vector<int> resultsViolin;
+    vector<int> resultsBass;
     vector < vector <int> > container;
 
 	void changeDisplayValues(DisplayData d) {
@@ -97,8 +109,8 @@ class Interface : public Gtk::Window{
     void classChanged();
     void cleanSamples();
     void recordSample();
-    void createTestTM();
-    void createTestReal();
+    //void createTestTM();
+    //void createTestReal();
     void printTrainingMatrix();
     void printClasses();
     void trainNeuronalNetwork();

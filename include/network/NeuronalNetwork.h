@@ -37,9 +37,9 @@ class NeuronalNetwork{
 
 		//Neuronal network
 		void initWeights();
-		double neuronalNetworkExecution(vector<int> currentInput);
-		void backPropagation(vector<int> currentInput, double output, double error);
-		void training(vector < vector<int> > trainingMatrix, vector<int> results);
+		double neuronalNetworkExecution(vector<double> currentInput);
+		void backPropagation(vector<double> currentInput, double output, double error);
+		void training(vector < vector<double> > trainingMatrix, vector<int> results);
 
 		//Utilities
 		double randomNumber();

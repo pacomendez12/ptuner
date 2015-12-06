@@ -143,8 +143,8 @@ Interface::Interface()
   m_Dispatcher.connect(sigc::mem_fun(*this, &Interface::notification));
 
   initNeuronalNetworkFunctionality();
-  createTestTM();
-  createTestReal();
+  //createTestTM();
+  //createTestReal();
 
   tuner->gui = this;
   show_all_children();
@@ -180,12 +180,12 @@ void Interface::changeNote(){
 }
 
 void Interface::changeString(){
-  /*
+  
   std::vector<int> something = {11,12,13,14,15};
   int random = rand()%(4) + 1;
   stringSelectedBuffer->set_text("" + something[random]);
-  */
-  neuronalNetwork->printNeuronalNetwork();
+  
+  //neuronalNetwork->printNeuronalNetwork();
 }
 
 void Interface::changeInstrument(){
@@ -207,10 +207,10 @@ void Interface::classChanged(){
 }
 
 void Interface::initNeuronalNetworkFunctionality(){
-  this->inputs = 25;
-  this->hiddenLayerSize = 13;
-  this->minEpochsApplied = 1000;
-  this->learningRate = 1.0;
+  this->inputs = TOTAL_INPUTS;
+  this->hiddenLayerSize = HIDDEN_LAYER_SIZE;
+  this->minEpochsApplied = MIN_EPOCHS_APPLY;
+  this->learningRate = LEARNING_RATE;
   this->neuronalNetwork = new NeuronalNetwork(inputs,hiddenLayerSize, minEpochsApplied, learningRate);
 }
 
@@ -222,8 +222,13 @@ void Interface::cleanSamples(){
 }
 
 void Interface::recordSample(){
-  int trainingMatrixSize = trainingMatrix.size();
-  if(trainingMatrixSize == 12){
+  int guitarSize = guitarVector.size();
+  int violinSize = violinVector.size();
+  int bassSize = bassVector.size();
+
+  int totalAmount = guitarSize + violinSize + bassSize;
+  
+  if(totalAmount == TRAINING_MATRIX_SIZE){
     errorBuffer->set_text ("El limite de muestras se ha alcanzado");
     return;
   }
@@ -231,8 +236,18 @@ void Interface::recordSample(){
   //Start recording
   tuner->startTuning();
   double * arr = tuner->getProcessedArray();
-  vector<int> v(arr, arr + 256);
-  int vSize = v.size();
+  //vector<double> currentVector;
+  /*for(int i=0; i<TOTAL_INPUTS; i++){
+    printf("%f,",arr[i]);
+    currentVector.push_back(arr[i]);
+  }
+  printf("eeeeee\n");
+  for(int i=0; i<TOTAL_INPUTS; i++){
+    printf("%f,",currentVector[i]);
+    //currentVector.push_back(arr[i]);
+  }*/
+  vector<double> currentVector(arr, arr + TOTAL_INPUTS);
+  int vSize = currentVector.size();
   printf("vector v size: %d\n",vSize);
 
   //TODO: check if it working
@@ -243,71 +258,35 @@ void Interface::recordSample(){
   Glib::ustring text = classCombo.get_active_text();
   
   if(text.compare("Guitarra") == 0){
-    results.push_back(0);
+    guitarVector.push_back(currentVector);
   }
 
-  if(text.compare("Chelo") == 0){
-    results.push_back(1);
+  if(text.compare("Violin") == 0){
+    violinVector.push_back(currentVector);
   }
 
   //TODO: Agregar la otra clase que vamos a empezar a analizar
-
-  //TODO:Aqui es donde vamos a mandar a llamar la parte de grabar
-  vector<int> currentVector = container[trainingMatrixSize];
-  trainingMatrix.push_back(currentVector);
-  //TODO: Colocar correctamente cuatos d ecuantos llevamos
+  
+  //TODO: Colocar correctamente cuaNtos de cuantos llevamos
   samplesCounterBuffer->set_text ("Hubo un aumento");
   errorBuffer->set_text ("");
-}
 
-//For test purposes
-void Interface::createTestTM(){
-  vector<int> v = {0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0};
-  vector<int> v2 = {1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v3 = {0,1,1,1,0,0,1,1,1,0,0,1,0,1,0,0,1,1,1,0,0,1,1,1,0};
-  vector<int> v4 = {1,0,0,0,1,0,1,1,1,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v5 = {0,0,1,0,0,0,1,0,1,0,0,1,0,1,0,0,1,0,1,0,0,0,1,0,0};
-  vector<int> v6 = {1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,1,1,1,0,1,0,0,0,1};
-  vector<int> v7 = {1,0,0,0,1,0,1,0,1,0,0,1,1,0,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v8 = {1,0,0,0,1,0,1,0,1,0,0,0,1,1,0,0,1,0,1,0,1,0,0,0,1};
-  vector<int> v9 = {0,1,1,1,0,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,0,1,1,1,0};
-  vector<int> v10 = {1,1,0,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1,0,1,1};
-  vector<int> v11 = {0,1,1,1,0,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,0,1,1,1,0};
-  vector<int> v12 = {0,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,0};
+  guitarSize = guitarVector.size();
+  violinSize = violinVector.size();
+  bassSize = bassVector.size();
 
-  container.push_back(v);
-  container.push_back(v2);
-  container.push_back(v3);
-  container.push_back(v4);
-  container.push_back(v5);
-  container.push_back(v6);
-  container.push_back(v7);
-  container.push_back(v8);
-  container.push_back(v9);
-  container.push_back(v10);
-  container.push_back(v11);
-  container.push_back(v12);
-}
+  totalAmount = guitarSize + violinSize + bassSize;
 
-void Interface::createTestReal(){
-  vector<int> rv = {0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0,0,1,1,1,0};
-  vector<int> rv2 = {0,1,1,1,0,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,0,1,1,1,0};
-  vector<int> rv3 = {1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,1};
-  vector<int> rv4 = {1,0,0,0,1,1,1,0,1,1,0,1,1,1,0,0,1,1,1,0,1,1,0,1,1};
-
-  realMatrix.push_back(rv);
-  realMatrix.push_back(rv2);
-  realMatrix.push_back(rv3);
-  realMatrix.push_back(rv4);
+  printf("El total de muestras obtenidas es: %d\n", totalAmount);
 }
 
 void Interface::printTrainingMatrix(){
   int tmSize = trainingMatrix.size();
   for(int i=0; i<tmSize; i++){
-    vector<int> v = trainingMatrix[i];
+    vector<double> v = trainingMatrix[i];
     int localVectorSize = v.size();
     for(int y=0; y<localVectorSize; y++){
-      printf("%d,",v[y]);
+      printf("%f,",v[y]);
     }
     printf("\n");
   }
@@ -322,7 +301,18 @@ void Interface::printClasses(){
 }
 
 void Interface::trainNeuronalNetwork(){
-  printf("Inicializando entrenamiento desde interfaz\n");
+  printf("Inicializando entrenamiento\n");
+
+  int guitarSize = guitarVector.size();
+  int violinSize = violinVector.size();
+  int bassSize = bassVector.size();
+
+  int totalAmount = guitarSize + violinSize + bassSize;
+  
+  if(totalAmount < TRAINING_MATRIX_SIZE){
+    errorBuffer->set_text ("Se necesitan al menos 24 muestras para entrenar la red");
+    return;
+  }
 
   printf("Se va a borrar el entrenamiento previo de la red neuronal\n");
   
@@ -332,11 +322,14 @@ void Interface::trainNeuronalNetwork(){
     printf("El archivo fue eliminado correctamente");
   }
 
-  int trainingMatrixSize = trainingMatrix.size();
-  
-  if(trainingMatrixSize < 12){
-    errorBuffer->set_text ("Se necesitan al menos 12 muestras para entrenar la red");
-    return;
+  //TODO: Hacer la mezcla de las muestras y las clases
+  for(int i=0; i<12; i++){
+    vector<double> guitar = guitarVector[i];
+    vector<double> violin = violinVector[i];
+    trainingMatrix.push_back(guitar);
+    trainingMatrix.push_back(violin);
+    results.push_back(0);
+    results.push_back(1);
   }
 
   //printTrainingMatrix();
@@ -365,8 +358,23 @@ void Interface::evaluateForRealSamples(){
   }
   
   printf("Resultados obtenidos con una red entrenada previamente\n");
-  for(int i=0; i<4; i++){
-    printf("%f\n",neuronalNetwork->neuronalNetworkExecution(realMatrix[i]));
+
+
+  printf("Grabando...\n");
+  tuner->startTuning();
+  double * arr = tuner->getProcessedArray();
+  vector<double> currentVector(arr, arr + 256);
+  int vSize = currentVector.size();
+  printf("vector v size: %d\n",vSize);
+  printf("Termino de grabar\n");
+
+
+  printf("Entra a procesamiento\n");
+  double result = neuronalNetwork->neuronalNetworkExecution(currentVector);
+  if(result <= 5.0){
+    printf("Es una guitarra");
+  }else if(result > 5.0){
+    printf("Es un violin");
   }
 }
 

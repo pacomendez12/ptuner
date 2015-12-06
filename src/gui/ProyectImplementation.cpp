@@ -234,25 +234,23 @@ void Interface::recordSample(){
   }
 
   //Start recording
-  tuner->startTuning();
+  //tuner->startTuning();
+
   double * arr = tuner->getProcessedArray();
-  //vector<double> currentVector;
-  /*for(int i=0; i<TOTAL_INPUTS; i++){
-    printf("%f,",arr[i]);
-    currentVector.push_back(arr[i]);
-  }
-  printf("eeeeee\n");
-  for(int i=0; i<TOTAL_INPUTS; i++){
-    printf("%f,",currentVector[i]);
-    //currentVector.push_back(arr[i]);
-  }*/
+  
   vector<double> currentVector(arr, arr + TOTAL_INPUTS);
-  int vSize = currentVector.size();
-  printf("vector v size: %d\n",vSize);
+  /*
+  for(int i=0; i<512; i++){
+    printf("%lf,",currentVector[i]);
+  }
+  */
+
+  //int vSize = currentVector.size();
+  
+  //printf("vector v size: %d\n",vSize);
 
   //TODO: check if it working
-  tuner->stopTuning();
-
+  //tuner->stopTuning();
 
   //Declaracion de las clases
   Glib::ustring text = classCombo.get_active_text();
@@ -298,6 +296,7 @@ void Interface::printClasses(){
   for(int i=0; i<resultsSize; i++){
       printf("%d,",results[i]);
   }
+  printf("\n");
 }
 
 void Interface::trainNeuronalNetwork(){
@@ -314,6 +313,7 @@ void Interface::trainNeuronalNetwork(){
     return;
   }
 
+  /*
   printf("Se va a borrar el entrenamiento previo de la red neuronal\n");
   
   if(std::remove("nn-weights.data")!= 0){
@@ -321,8 +321,10 @@ void Interface::trainNeuronalNetwork(){
   }else{
     printf("El archivo fue eliminado correctamente");
   }
+  */
 
   //TODO: Hacer la mezcla de las muestras y las clases
+  printf("Haciendo la mezcla \n");
   for(int i=0; i<12; i++){
     vector<double> guitar = guitarVector[i];
     vector<double> violin = violinVector[i];
@@ -331,9 +333,10 @@ void Interface::trainNeuronalNetwork(){
     results.push_back(0);
     results.push_back(1);
   }
+  printf("Termino la mezcla \n");
 
   //printTrainingMatrix();
-  //printClasses();
+  printClasses();
 
   neuronalNetwork->training(trainingMatrix,results);
   
@@ -361,7 +364,7 @@ void Interface::evaluateForRealSamples(){
 
 
   printf("Grabando...\n");
-  tuner->startTuning();
+  //tuner->startTuning();
   double * arr = tuner->getProcessedArray();
   vector<double> currentVector(arr, arr + 256);
   int vSize = currentVector.size();
@@ -371,11 +374,14 @@ void Interface::evaluateForRealSamples(){
 
   printf("Entra a procesamiento\n");
   double result = neuronalNetwork->neuronalNetworkExecution(currentVector);
+  printf("RESULT: %f]\n", result);
+  /*  
   if(result <= 5.0){
     printf("Es una guitarra");
   }else if(result > 5.0){
     printf("Es un violin");
   }
+  */
 }
 
 void Interface::exportTrainedNeuronalNetwork(){

@@ -314,6 +314,11 @@ Tuner::getProcessedArray() {
 	buffer_mutex.lock();
 	/* copying representable data (that could be in a chart */
 	memcpy(representable_data, complete_buffer_with_window, fft_size * sizeof(double));
+	/*
+	for(int i=0; i<512; i++){
+		printf("%f,",representable_data[i]);
+	}
+	*/
 	buffer_mutex.unlock();
 	return representable_data;
 }

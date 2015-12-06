@@ -349,10 +349,10 @@ Tuner::calculateNoteAndFrequency(double f)
 	int n_t = (int)n;
 
 	note = round(n);
-	if (note == n_t) {
+	if (note == n_t) { //note down
 		error = n - n_t;
-	} else {
-		error = note - n;
+	} else { // note up
+		error = n - note;
 	}
 }
 

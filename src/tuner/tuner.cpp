@@ -177,7 +177,12 @@ Tuner::findFrequency()
 		}
 		w = wkm1;
 		frequency = (w * sample_rate) / (2.0 * M_PI * oversampling);
-		printf("Freq = %lf\n", frequency);
+		//printf("Freq = %lf\n", frequency);
+
+
+		std::string note_string = getNoteFromFrequency(frequency);
+		 double error = getErrorFromFrequency(frequency);
+		 cout << "Note: " << note_string << endl;
 	}
 
 }
@@ -253,6 +258,22 @@ Tuner::Tuner(s_system_t sst)
 													(fft_size - 1.0));
 	}
 
+
+	/* initialize notes vector */
+	notes[0] = "Do";
+	notes[1] = "Do #";
+	notes[2] = "Re";
+	notes[3] = "Re #";
+	notes[4] = "Mi";
+	notes[5] = "Fa";
+	notes[6] = "Fa #";
+	notes[7] = "Sol";
+	notes[8] = "Sol #";
+	notes[9] = "La";
+	notes[10] = "La #";
+	notes[11] = "Si";
+
+
 	/* global Tuner ptr have to be able to call the 
 	 * tuner object callbackData */
 	tunerPtr = this;
@@ -302,4 +323,39 @@ Tuner::stopTuning()
 {
 	status = NOT_TUNING;
 	sound->stop();
+}
+
+
+std::string
+Tuner::getNoteFromFrequency(double f)
+{
+	const double inc = 1.0 / 12.0;
+	const double offset = 0.0312187306;
+	double log_2_freq = log2(f);
+	int octave = ceil(log2(f));
+
+	double diff = log_2_freq - (octave + offset);
+
+	double n = diff / inc;
+	int n_t = (int)n;
+
+	note = round(n);
+	if (note == n_t) {
+		error = n - n_t;
+	} else {
+		error = note - n;
+	}
+	if (note > 11)
+		printf("ERROR: bad note\n");
+	else 
+		printf("note is = %d\n", (int) note);
+	//return notes[(int)note];
+	return "paco";
+}
+
+
+double
+Tuner::getErrorFromFrequency(double frequency)
+{
+	return 0.0;
 }

@@ -12,7 +12,6 @@ enum FilterType {CHEBY_TYPE,
 				BUTTERWORTH
 }; 
 
-
 #define max(a,b) (((a)<(b))?(b):(a))
 
 class Filter {

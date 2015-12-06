@@ -3,14 +3,15 @@
 #include <sound_system/definitions.h>
 #include <tuner/filter.h>
 #include <mutex>
-
 #include <cmath>
+#include <string>
 
 #ifndef TUNER_H
 
 #define TUNER_H
 
 using namespace Sound_system;
+//using namespace std;
 
 
 #define TUNER_DEFAULT_SOUND_SYSTEM ALSA
@@ -89,6 +90,14 @@ class Tuner {
 	Signal * signal; /* signal object */
 
 
+	/* after frequency is calculated */
+	double error;
+	double note;
+	std::string notes[12];
+
+	std::string getNoteFromFrequency(double freq);
+	double getErrorFromFrequency(double freq);
+
 	public:
 	Tuner();
 	Tuner(s_system_t sst);
@@ -112,6 +121,7 @@ class Tuner {
 	}
 
 	double * getProcessedArray();
+
 
 };
 

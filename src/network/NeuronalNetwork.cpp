@@ -51,7 +51,7 @@ void NeuronalNetwork::initWeights(){
 	}
 }
 
-double NeuronalNetwork::neuronalNetworkExecution(vector<int> currentInput){
+double NeuronalNetwork::neuronalNetworkExecution(vector<double> currentInput){
 	double output = 0;
 	int currentInputSize = currentInput.size();
 
@@ -82,7 +82,7 @@ double NeuronalNetwork::neuronalNetworkExecution(vector<int> currentInput){
 	return output;
 }
 
-void NeuronalNetwork::backPropagation(vector<int> currentInput, double output, double error){
+void NeuronalNetwork::backPropagation(vector<double> currentInput, double output, double error){
 	//Output delta for hidden layer
 	double outputDelta = error * sigmoidDerivate(output);
 	int inputSize = currentInput.size();
@@ -106,7 +106,7 @@ void NeuronalNetwork::backPropagation(vector<int> currentInput, double output, d
 	}
 }
 
-void NeuronalNetwork::training(vector < vector<int> > trainingMatrix, vector<int> results){
+void NeuronalNetwork::training(vector < vector<double> > trainingMatrix, vector<int> results){
 	//Has all the elements that we will test to train the matrix
 	int epochSize = results.size();
 	int hits=0;
@@ -114,7 +114,7 @@ void NeuronalNetwork::training(vector < vector<int> > trainingMatrix, vector<int
 	int epochs = 0;
 
 	while(epochSize > hits && epochs < minEpochsApplied){
-		vector<int> currentInput = trainingMatrix[currentRow];
+		vector<double> currentInput = trainingMatrix[currentRow];
 
 		//Result of evaluating completly one element of the set
 		double output = neuronalNetworkExecution(currentInput);

@@ -13,6 +13,12 @@
 #include <network/NeuronalNetwork.h>
 #include <tuner/tuner.h>
 
+#define TRAINING_MATRIX_SIZE 24
+#define HIDDEN_LAYER_SIZE 128
+#define TOTAL_INPUTS 256
+#define MIN_EPOCHS_APPLY 1000
+#define LEARNING_RATE 1.0
+
 class Interface : public Gtk::Window{
   public:
     Interface();
@@ -56,9 +62,15 @@ class Interface : public Gtk::Window{
 
     NeuronalNetwork *neuronalNetwork;
     Tuner tuner;
-    vector < vector <int> > trainingMatrix;
-    vector < vector <int> > realMatrix;
+    vector < vector <double> > trainingMatrix;
+    vector < vector <double> > guitarVector;
+    vector < vector <double> > violinVector;
+    vector < vector <double> > bassVector;
+    vector < vector <double> > realMatrix;
     vector<int> results;
+    vector<int> resultsGuitar;
+    vector<int> resultsViolin;
+    vector<int> resultsBass;
     vector < vector <int> > container;
 
 	private:
@@ -72,8 +84,8 @@ class Interface : public Gtk::Window{
     void classChanged();
     void cleanSamples();
     void recordSample();
-    void createTestTM();
-    void createTestReal();
+    //void createTestTM();
+    //void createTestReal();
     void printTrainingMatrix();
     void printClasses();
     void trainNeuronalNetwork();

@@ -21,7 +21,7 @@
 #define ALSA_DEFAULT_BUFFER_SIZE 128
 
 /* Default number of channels */
-#define ALSA_DEFAULT_NUMBER_CHANNELS 2
+#define ALSA_DEFAULT_NUMBER_CHANNELS 1
 
 #define ALSA_DEFAULT_RATES 44100
 

@@ -47,6 +47,6 @@ int main(int argc, char * argv[])
 	tuner.startTuning();
 	double * arr = tuner.getProcessedArray();
 	/* copy arr to other array because it will change */
-	sleep(2);
+	sleep(10);
 	return 0;
 }

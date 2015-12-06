@@ -13,7 +13,6 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 	int peak;
 	double rejection_relation = pow(10, 20 / 10);
 	int m;
-	//printf("pk = %d\n", tuner->peak_number);
 
 	for (int i = 0; i < tuner->peak_number; i++) {
 		index[i] = -1;
@@ -30,7 +29,6 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 
 	for (int i = low_index; i < n - peak_half_width; i++) {
 		if (is_peak(x, i)) {
-			//printf("ispeak true\n");
 			m = 0;
 			for (int j = 0; j < tuner->peak_number; j++) {
 				if (index[j] == -1) {
@@ -44,7 +42,6 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 			}
 
 			if (index[m] == -1) {
-				//printf("here i = %d\n", i);
 				index[m] = i;
 			} else if (y[i] > y[index[m]]) {
 				index[m] = i;
@@ -62,18 +59,16 @@ Signal::get_fundamental_peak(double * x, double * y, int n)
 			max_index = index[i];
 		}
 	}
-	printf("index = [%d, %d, %d]\n", index[0], index[1], index[2]);
 
 	if (max_index != -1) {
-		//printf("aqui .........................\n");
 		for (int i = 0; i < tuner->peak_number; i++) {
 			if (index[i] == -1 || (rejection_relation * x[index[i]] < max)) {
 				index[i] = n;
 			}
 		}
 
-		//printf("index = [%d, %d, %d]\n", index[0], index[1], index[2]);
-		for (int m = 0, j = 0; j < tuner->peak_number; j++) {
+		int j;
+		for (j = 0, m = 0; j < tuner->peak_number; j++) {
 			if (index[j] < index[m]) {
 				m = j;
 			}

@@ -14,13 +14,39 @@ callback(double * data, int data_size, void * arg)
 	tunerPtr->callbackData(data, data_size, arg);
 }
 
+
+int lap = -1;
 void
 Tuner::callbackData(double * data, int data_size, void * arg)
 {
 	/* data received from sound system, copy as fast as posible */
 	memcpy(buffer, data, data_size * sizeof(double));
 
+	//#define INJECT
 
+	#ifdef INJECT
+	lap++;
+int j;
+	for (int i = 0, j = 0 ; i < 128; i++) {
+		if (lap == 0) {
+			if (i < 64)
+				buffer[i] = 200 + i;
+			else
+				buffer[i] = 200 + i - j--;
+		} else if (lap == 1) {
+			if (i < 64)
+				buffer[i] = 250 + i + 5;
+			else
+				buffer[i] = 250 + i + 5 - j--;
+		} else if (lap == 2) {
+			if (i < 64)
+				buffer[i] = 180 + i + 20;
+			else
+				buffer[i] = 180 + i + 20 - j--;
+			lap = -1;
+		}
+	}
+	#endif
 	/* apply decimation to have better results */
 	decimate();
 
@@ -35,7 +61,6 @@ Tuner::decimate()
 	int data_size = sound_system_buffer_size;
 	int dec_out_len = 1 + (data_size - (dii + 1)) / oversampling;
 
-	//printf("dec_out_len = %d\n", dec_out_len);
 	buffer_mutex.lock();
 
 	if (complete_buffer_size > dec_out_len) {
@@ -44,7 +69,6 @@ Tuner::decimate()
 		unsigned int size_data_moved = (complete_buffer_size - dec_out_len);
 		memmove(complete_buffer, complete_buffer + dec_out_len,
 				size_data_moved * sizeof(double));
-		//printf("moved = %u\n", size_data_moved);
 	}
 
 	if (oversampling > 1) {
@@ -58,18 +82,12 @@ Tuner::decimate()
 		/* downsampling */
 		for (int doi = 0; dii < data_size; doi++, dii += oversampling) {
 			out[doi] = in[dii];
-//			cout << out[doi] << " ";
 		}
-//		cout << endl;
 		dii -= data_size;
 	} else {
 		memcpy(complete_buffer + complete_buffer_size - dec_out_len, buffer,
 				dec_out_len * sizeof(double));
 	}
-	/*for (int i = 0; i < 10; i++) {
-		printf("%lf ", complete_buffer[i]);
-	}
-	cout << endl << endl << endl;*/
 	buffer_mutex.unlock();
 }
 
@@ -81,18 +99,9 @@ Tuner::findFrequency()
 		complete_buffer_with_window[i] =
 			complete_buffer[complete_buffer_size - fft_size + i] * han_fft[i];
 	}
-	//printf("complete_buffer_size = %d\n", complete_buffer_size);
-
-	for (int i = 0, j = 0; i < 512; i++) {
-		if (i < 256)
-			complete_buffer_with_window[i] = 10 + i;
-		else
-			complete_buffer_with_window[i] = 10 - j--;
-	}
 
 	/* do fft */
 	fft->fft(complete_buffer_with_window, complex_buffer, fft_size);
-	//printf("[%lf, %lf]", complex_buffer[0].real, complex_buffer[0].imag);
 
 	for (int i = 0; i < (fft_size / 2); i++) {
 		fft_spd_buffer[i] = (complex_buffer[i].real * complex_buffer[i].real +
@@ -102,8 +111,6 @@ Tuner::findFrequency()
 	/* copying representable data (that could be in a chart */
 	/*memcpy(representable_data, fft_spd_buffer, fft_size / 2 * sizeof(double));*/
 
-	/* I thing the nerual network will use representable data        ****** */ 
-
 	fft_spd_diff_buffer[0] = 0.0;
 	for (int i = 1; i < (fft_size / 2) - 1; i++) {
 		fft_spd_diff_buffer[i] = 2.0 * fft_spd_buffer[i] - fft_spd_buffer[i - 1] -
@@ -112,34 +119,27 @@ Tuner::findFrequency()
 			fft_spd_diff_buffer[i] = 0.0;
 		}
 	}
-	/*for (int i = 0; i < 256; i++) {
-		printf("%lf ", fft_spd_buffer[i]);
-	}
-	cout << endl << endl;*/
 
 	/* look for peak */
 	int m = signal->get_fundamental_peak(fft_spd_buffer,
 										fft_spd_diff_buffer, fft_size / 2);
-	std::cout << "M = " << m << endl;
-	exit(0);
 	double w = (m - 1) * delta_fft;
 
 	if (m == (signed) fft_size / 2) {
 		/* setting frequency to 0 because there is no a good signal */
 		frequency = 0.0;
 	} else {
-		/* there a a frequency to show */
+		/* there is a frequency to show */
 		const unsigned int n_dft = 2;
 		double dw = delta_fft;
 
 		for (int k = 0; k < n_dft; k++) {
-			dw = 2.0 * dw / (n_dft - 1);
-
+			dw = 2.0 * dw / (dft_size - 1);
 			if (0 == k) {
 				fft->fft_spd(complete_buffer_with_window, fft_size, w + dw, dw,
 						spd_dft + 1, dft_size - 2);
 				spd_dft[0] = spd_dft[m - 1];
-				spd_dft[dft_size - 1] = spd_dft[m + 1];
+				spd_dft[dft_size - 1] = fft_spd_buffer[m + 1];
 			} else {
 				fft->fft_spd(complete_buffer_with_window, fft_size, w, dw,
 						spd_dft, dft_size);
@@ -150,7 +150,7 @@ Tuner::findFrequency()
 		}
 
 		w += dw;
-
+		
 		/* window again */
 		for (int i = 0; i < complete_buffer_size; i++) {
 			windowed_buffer[i] = complete_buffer[i] * hanWindow[i];
@@ -159,20 +159,19 @@ Tuner::findFrequency()
 		/* Newtown Raphson */
 		const unsigned int n_iter = 10;
 		double wk = -1.0e5;
-		double wkm1 = m;
+		double wkm1 = w;
 		double d1, d2;
 
 
-		for (int k = 0; k < n_iter && fabs(wk - wkm1) > 1.0e-8; k++) {
+		for (int k = 0; (k < n_iter) && fabs(wk - wkm1) > 1.0e-8; k++) {
 			wk = wkm1;
 
 			fft->fft_spd_diff(windowed_buffer, complete_buffer_size, wk, d1, d2);
 			wkm1 = wk - d1 / d2;
 		}
-
 		w = wkm1;
 		frequency = (w * sample_rate) / (2.0 * M_PI * oversampling);
-	//	printf("Freq = %lf\n", frequency);
+		printf("Freq = %lf\n", frequency);
 	}
 
 }

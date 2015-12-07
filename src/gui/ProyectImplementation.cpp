@@ -104,10 +104,10 @@ Interface::Interface()
   leftGrid.attach(quitBtn,0,6,3,1);
 
   //Optional
-  leftGrid.attach(changeNoteBtn,0,7,1,1);
+  /*leftGrid.attach(changeNoteBtn,0,7,1,1);
   leftGrid.attach(changeStringBtn,0,8,1,1);
   leftGrid.attach(changeTunerBtn,0,9,1,1);
-  leftGrid.attach(changeInstumentBtn,0,10,1,1);
+  leftGrid.attach(changeInstumentBtn,0,10,1,1);*/
 
   // Neuronal Network
   //First Row
@@ -147,6 +147,7 @@ Interface::Interface()
   //createTestReal();
 
   tuner->gui = this;
+  dataAvailable = false;
   show_all_children();
 }
 
@@ -162,6 +163,7 @@ void Interface::notification()
   noteSelectedBuffer = noteSelectedTxtView->get_buffer();
   noteSelectedBuffer->set_text(data.note);
   m_adjustment->set_value(data.error * 100);
+  stringSelectedBuffer->set_text(data.str);
 }
 
 void Interface::quitBtnPressed(){
@@ -359,15 +361,17 @@ void Interface::evaluateForRealSamples(){
   if(nnTrained == 0){
     errorBuffer->set_text ("La red neuronal no ha sido entrenada, entrenarla o cargar configuracion");
     return;
+  } else if (!dataAvailable) {
+    errorBuffer->set_text ("No hay sonido de algun instrumento");
   }
-  
+
   printf("Resultados obtenidos con una red entrenada previamente\n");
 
 
   printf("Grabando...\n");
   //tuner->startTuning();
   double * arr = tuner->getProcessedArray();
-  vector<double> currentVector(arr, arr + 256);
+  vector<double> currentVector(arr, arr + TOTAL_INPUTS);
   int vSize = currentVector.size();
   printf("vector v size: %d\n",vSize);
   printf("Termino de grabar\n");
@@ -376,13 +380,16 @@ void Interface::evaluateForRealSamples(){
   printf("Entra a procesamiento\n");
   double result = neuronalNetwork->neuronalNetworkExecution(currentVector);
   printf("RESULT: %f]\n", result);
-  /*  
-  if(result <= 5.0){
-    printf("Es una guitarra");
-  }else if(result > 5.0){
-    printf("Es un violin");
+
+  if (result < 0.5) {
+    //printf("Es una guitarra");
+    instrumentSelectedBuffer->set_text("Guitarra :)");
+	instrumentType = GUITAR;
+  } else {
+    instrumentSelectedBuffer->set_text("Violin :)");
+	instrumentType = VIOLIN;
+    //printf("Es un violin");
   }
-  */
 }
 
 void Interface::exportTrainedNeuronalNetwork(){

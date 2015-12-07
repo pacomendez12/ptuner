@@ -95,23 +95,25 @@ Tuner::decimate()
 void
 Tuner::findFrequency()
 {
-	buffer_mutex.lock();
+	//buffer_mutex.lock();
 	/* applying window */
 	for (int i = 0; i < fft_size; i++) {
 		complete_buffer_with_window[i] =
 			complete_buffer[complete_buffer_size -
 										fft_size + i] * han_fft[i];
 	}
-	buffer_mutex.unlock();
+	//buffer_mutex.unlock();
 
 	/* do fft */
 	fft->fft(complete_buffer_with_window, complex_buffer, fft_size);
 
+	buffer_mutex.lock();
 	for (int i = 0; i < (fft_size / 2); i++) {
 		fft_spd_buffer[i] =
 			(complex_buffer[i].real * complex_buffer[i].real +
 			complex_buffer[i].imag * complex_buffer[i].imag) * _1_n2;
 	}
+	buffer_mutex.unlock();
 
 	/* copying representable data (that could be in a chart */
 	/*memcpy(representable_data, fft_spd_buffer, fft_size /
@@ -134,6 +136,7 @@ Tuner::findFrequency()
 	if (m == (signed) fft_size / 2) {
 		/* setting frequency to 0 because there is no a good signal */
 		frequency = 0.0;
+		 gui->dataAvailable = false;
 	} else {
 		/* there is a frequency to show */
 		const unsigned int n_dft = 2;
@@ -183,12 +186,14 @@ Tuner::findFrequency()
 
 		std::string note_string = getNoteFromFrequency(frequency);
 		 double error = getErrorFromFrequency(frequency);
+		 std::string str = getString(frequency, note, gui->instrumentType);
 		 //cout << "Note: " << note_string << ", Error: "<< error << endl;
 		 DisplayData data;
 		 data.note = note_string;
 		 data.error = error;
-		 data.str = "";
+		 data.str = str;
 		 gui->changeDisplayValues(data);
+		 gui->dataAvailable = true;
 		 //gui->noteSelectedBuffer->set_text(note_string);
 	}
 
@@ -280,6 +285,19 @@ Tuner::Tuner(s_system_t sst)
 	notes[10] = "La # ";
 	notes[11] = "Si   ";
 
+	/* iniialize strings */
+	stringsGuitar[5] = 82.41;
+	stringsGuitar[4] = 110;
+	stringsGuitar[3] = 146.8;
+	stringsGuitar[2] = 196;
+	stringsGuitar[1] = 246.9;
+	stringsGuitar[0] = 329.6;
+
+	stringsViolin[3] = 130.8;
+	stringsViolin[2] = 196;
+	stringsViolin[1] = 293.7;
+	stringsViolin[0] = 440;
+
 
 	/* global Tuner ptr have to be able to call the 
 	 * tuner object callbackData */
@@ -314,11 +332,18 @@ Tuner::getProcessedArray() {
 	buffer_mutex.lock();
 	/* copying representable data (that could be in a chart */
 	memcpy(representable_data, complete_buffer_with_window, fft_size * sizeof(double));
-	/*
-	for(int i=0; i<512; i++){
-		printf("%f,",representable_data[i]);
+
+	/*for(int i = 0, j = 0; i < 256; i++){
+		representable_data[j] = complex_buffer[i].real;
+		representable_data[j + 1] = complex_buffer[i].imag;
+		j += 2;
+//		printf("%f,",representable_data[i]);
+	}*/
+
+	for (int i = 0; i < 512; i++) {
+		representable_data[i] = fft_spd_buffer[i % 256];
 	}
-	*/
+
 	buffer_mutex.unlock();
 	return representable_data;
 }
@@ -369,6 +394,52 @@ Tuner::getNoteFromFrequency(double f)
 	return note_string;
 }
 
+int
+Tuner::closestString(int inst)
+{
+	#define DISTANCE_G 15
+	#define DISTANCE_V 50
+	switch (inst) {
+		case GUITAR:
+			if (frequency > stringsGuitar[0]) {
+				return 1;
+			} else if (frequency < stringsGuitar[5]) {
+				return 6;
+			}
+
+			for (int i = 0; i < 6; i++) {
+				if (frequency > (stringsGuitar[i] - DISTANCE_G) && (stringsGuitar[i] + DISTANCE_G) > frequency) {
+					return i + 1;
+				}
+			}
+			break;
+		case VIOLIN:
+			if (frequency > stringsViolin[0]) {
+				return 1;
+			} else if (frequency < stringsViolin[3]) {
+				return 4;
+			}
+
+			for (int i = 0; i < 4; i++) {
+				if (frequency > (stringsViolin[i] - DISTANCE_V) && (stringsViolin[i] + DISTANCE_V) > frequency) {
+					return i + 1;
+				}
+			}
+			break;
+	}
+	return -1;
+}
+
+std::string
+Tuner::getString(double frequency, double note, int inst)
+{
+	int str = closestString(inst);
+	if (str != -1) {
+		return std::to_string(str);
+	} else {
+		return "";
+	}
+}
 
 double
 Tuner::getErrorFromFrequency(double f)

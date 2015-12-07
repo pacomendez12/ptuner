@@ -126,7 +126,7 @@ void NeuronalNetwork::training(vector < vector<double> > trainingMatrix, vector<
 		/*
 		* 0.25 is the range, the abs is used to check if the value is in the correct range
 		*/
-		if(abs(error) <= 0.05)
+		if(abs(error) <= 0.01)
 			hits++;
 		else{
 			hits = 0;

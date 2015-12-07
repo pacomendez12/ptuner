@@ -21,6 +21,9 @@ class Tuner;
 #define MIN_EPOCHS_APPLY 1000
 #define LEARNING_RATE 0.01
 
+#define GUITAR 0
+#define VIOLIN 1
+
 
 struct DisplayData {
 	std::string note;
@@ -85,6 +88,8 @@ class Interface : public Gtk::Window{
     vector<int> resultsViolin;
     vector<int> resultsBass;
     vector < vector <int> > container;
+	int instrumentType;
+	bool dataAvailable;
 
 	void changeDisplayValues(DisplayData d) {
 		data = d;

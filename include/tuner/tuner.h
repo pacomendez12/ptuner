@@ -99,9 +99,14 @@ class Tuner {
 	std::string note_string;
 	std::string notes[12];
 
+	double stringsGuitar[6];
+	double stringsViolin[4];
+
 	std::string getNoteFromFrequency(double freq);
 	double getErrorFromFrequency(double freq);
 	void calculateNoteAndFrequency(double freq);
+	std::string getString(double f, double note, int inst);
+	int closestString(int instument);
 
 
 

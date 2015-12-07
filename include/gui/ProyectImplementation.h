@@ -66,8 +66,9 @@ class Interface : public Gtk::Window{
     Gtk::ComboBoxText classCombo;
 
     // Buttons
-    Gtk::Button startRecordingBtn, indentifyInstrumentBtn, loadNetworkBtn, changeNoteBtn, changeStringBtn, changeTunerBtn, changeInstumentBtn, quitBtn,
+    Gtk::Button indentifyInstrumentBtn, loadNetworkBtn, changeNoteBtn, changeStringBtn, changeTunerBtn, changeInstumentBtn, quitBtn,
                   recordSampleBtn, cleanTrainingBtn, startTrainingBtn;
+	Gtk::ToggleButton startRecordingBtn;
 
     //Functionality
     int inputs;

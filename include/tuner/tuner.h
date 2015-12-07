@@ -137,6 +137,13 @@ class Tuner {
 	/* GUI */
 	Interface * gui;
 
+	bool isTuning() {
+		if (status == TUNING) {
+			return true;
+		}
+		return false;
+	}
+
 };
 
 #endif /* end of include guard: TUNER_H */

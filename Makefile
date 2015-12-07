@@ -2,29 +2,41 @@ GCC=g++
 LIBS=-lasound
 FLAGS=-std=c++11 -fPIC -ggdb
 FLAGS_BIN=-std=c++11 -ggdb
+BINARY_NAME=netPtuner
 
 
-SRC=$(wildcard src/sound_system/*.cpp) $(wildcard src/util/*.cpp) $(wildcard src/tuner/*.cpp) $(wildcard src/fft/*.cpp)
-GUI_SRC=$(wildcard src/gui/*.cpp)
-NET_SRC=$(wildcard src/network/*.cpp) $(wildcard src/gui/*.cpp)
-#SRC=$(wildcard src/sound_system/*.cpp) 
-OBJ=$(wildcard ./*.o)
+SRC=$(wildcard src/sound_system/*.cpp) \
+$(wildcard src/util/*.cpp) \
+$(wildcard src/tuner/*.cpp) \
+$(wildcard src/fft/*.cpp) \
+$(wildcard src/network/*.cpp) \
+$(wildcard src/gui/*.cpp) \
 
-bin: system
-	$(GCC) -o main src/main.cpp $(OBJ) -Iinclude $(FLAGS_BIN) $(LIBS)
+OBJ=array.o \
+capture.o \
+complex.o \
+fft.o \
+filter.o \
+logger.o \
+NeuronalNetwork.o \
+player.o \
+ProyectImplementation.o \
+recorder_alsa.o \
+recorder.o \
+signal.o \
+sound_system.o \
+system_alsa.o \
+system_jack.o \
+system.o \
+tuner.o \
+vector.o \
 
-system: $(SRC)
-	$(GCC) -c $^ -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS) $(LIBS)
+$(BINARY_NAME): $(OBJ)
+	$(GCC) -o $(BINARY_NAME) src/MainNeuronalNetwork.cpp $(OBJ) -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS_BIN) $(LIBS)
 
-gui: $(GUI_SRC)
-	$(GCC) src/gui/main_app.cpp -o gui -Iinclude/gui `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS)
-
-net: net_make system
-	$(GCC) -o net src/MainNeuronalNetwork.cpp $(OBJ) -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS_BIN) $(LIBS)
-
-net_make: $(NET_SRC)
+$(OBJ): $(SRC)
 	$(GCC) -c $^ -Iinclude `pkg-config gtkmm-3.0 --cflags --libs` $(FLAGS) $(LIBS)
 
 clean:
-	rm -f *.o main
+	rm -f *.o netPtuner
 

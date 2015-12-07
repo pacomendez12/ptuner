@@ -207,6 +207,7 @@ Tuner::Tuner(s_system_t sst)
 {
 	sound_system_type = sst;
 	sound = new sound_system(sst, callback);
+	status = NOT_TUNING;
 
 	/* get real values from sound system */
 	sound_system_buffer_size = sound->getSoundSystemBufferSize();
@@ -351,16 +352,20 @@ Tuner::getProcessedArray() {
 void
 Tuner::startTuning()
 {
-	status = TUNING;
-	/* start capture from sound system */
-	sound->record();
+	if (status != TUNING) {
+		status = TUNING;
+		/* start capture from sound system */
+		sound->record();
+	}
 }
 
 void
 Tuner::stopTuning()
 {
-	status = NOT_TUNING;
-	sound->stop();
+	if (status != NOT_TUNING) {
+		status = NOT_TUNING;
+		sound->stop();
+	}
 }
 
 

@@ -6,7 +6,7 @@ using namespace std;
 
 Interface::Interface() 
 : 
-  startRecordingBtn("Start Recording"),
+  startRecordingBtn("Start/Stop Recording"),
   changeNoteBtn("Change Note"), 
   changeStringBtn("Change String"), 
   changeTunerBtn("Change Tuner"), 
@@ -29,7 +29,7 @@ Interface::Interface()
 
   //Combo
   classCombo.append("Guitarra");
-  classCombo.append("Chelo");
+  //classCombo.append("Chelo");
   classCombo.append("Violin");
   classCombo.set_active(1);
 
@@ -41,7 +41,7 @@ Interface::Interface()
   //Gtk::TextView *noteSelectedTxtView = new Gtk::TextView;
   noteSelectedTxtView = new Gtk::TextView;
   noteSelectedBuffer = noteSelectedTxtView ->get_buffer();
-  noteSelectedBuffer->set_text ("Do");
+  noteSelectedBuffer->set_text ("");
 
   Gtk::TextView *stringTxtView = new Gtk::TextView;
   Glib::RefPtr<Gtk::TextBuffer> stringBuffer = stringTxtView->get_buffer();
@@ -49,7 +49,7 @@ Interface::Interface()
 
   Gtk::TextView *selectedStringTxtView = new Gtk::TextView;
   stringSelectedBuffer = selectedStringTxtView ->get_buffer();
-  stringSelectedBuffer->set_text ("5");
+  stringSelectedBuffer->set_text ("");
 
   Gtk::TextView *instrumentTxtView = new Gtk::TextView;
   Glib::RefPtr<Gtk::TextBuffer> instrumentBuffer = instrumentTxtView->get_buffer();
@@ -57,7 +57,7 @@ Interface::Interface()
 
   Gtk::TextView *instrumentSelectedTxtView = new Gtk::TextView;
   instrumentSelectedBuffer = instrumentSelectedTxtView->get_buffer();
-  instrumentSelectedBuffer->set_text ("Guitarra");
+  instrumentSelectedBuffer->set_text ("");
 
   Gtk::TextView *selectClassTxtView = new Gtk::TextView;
   Glib::RefPtr<Gtk::TextBuffer> selectClassBuffer = selectClassTxtView->get_buffer();
@@ -65,7 +65,7 @@ Interface::Interface()
 
   Gtk::TextView *samplesCounterTxtView = new Gtk::TextView;
   samplesCounterBuffer = samplesCounterTxtView ->get_buffer();
-  samplesCounterBuffer->set_text ("0/12");
+  samplesCounterBuffer->set_text ("0/24");
 
   Gtk::TextView *hitsTxtView = new Gtk::TextView;
   hitsBuffer = hitsTxtView->get_buffer();
@@ -173,7 +173,11 @@ void Interface::quitBtnPressed(){
 void
 Interface::startRecordingBtnPressed(){
   printf("Start recording pressed\n");
-  tuner->startTuning();
+  if (tuner->isTuning()) {
+	  tuner->stopTuning();
+  } else {
+	  tuner->startTuning();
+  }
 }
 
 void Interface::changeNote(){
@@ -220,7 +224,10 @@ void Interface::initNeuronalNetworkFunctionality(){
 void Interface::cleanSamples(){
   trainingMatrix.clear();
   results.clear();
-  samplesCounterBuffer->set_text ("0/12");
+  guitarVector.clear();
+  violinVector.clear();
+  bassVector.clear();
+  samplesCounterBuffer->set_text ("0/24");
   errorBuffer->set_text ("Ya no hay muestras para entrenar la red.");
 }
 
@@ -268,15 +275,15 @@ void Interface::recordSample(){
 
   //TODO: Agregar la otra clase que vamos a empezar a analizar
   
-  //TODO: Colocar correctamente cuaNtos de cuantos llevamos
-  samplesCounterBuffer->set_text ("Hubo un aumento");
-  errorBuffer->set_text ("");
-
   guitarSize = guitarVector.size();
   violinSize = violinVector.size();
   bassSize = bassVector.size();
 
   totalAmount = guitarSize + violinSize + bassSize;
+
+  //TODO: Colocar correctamente cuaNtos de cuantos llevamos
+  samplesCounterBuffer->set_text (std::to_string(totalAmount) + "/24");
+  errorBuffer->set_text ("");
 
   printf("El total de muestras obtenidas es: %d\n", totalAmount);
 }
@@ -312,7 +319,7 @@ void Interface::trainNeuronalNetwork(){
   int totalAmount = guitarSize + violinSize + bassSize;
   
   if(totalAmount < TRAINING_MATRIX_SIZE){
-    errorBuffer->set_text ("Se necesitan al menos 24 muestras para entrenar la red");
+    errorBuffer->set_text ("Se necesitan 24 muestras para entrenar la red");
     return;
   }
 
@@ -351,8 +358,8 @@ void Interface::trainNeuronalNetwork(){
   errorBuffer->set_text ("La red neuronal ha terminado de entrenarse");
   
   //TODO: Cambiar los mensajes
-  hitsBuffer->set_text ("Hits:");
-  epochsBuffer->set_text ("Epochs:");
+  hitsBuffer->set_text ("Hits:" + std::to_string(neuronalNetwork->hits));
+  epochsBuffer->set_text ("Epochs:" + std::to_string(neuronalNetwork->epochs));
 
   exportTrainedNeuronalNetwork();
 }
@@ -363,6 +370,8 @@ void Interface::evaluateForRealSamples(){
     return;
   } else if (!dataAvailable) {
     errorBuffer->set_text ("No hay sonido de algun instrumento");
+    instrumentSelectedBuffer->set_text("");
+	return;
   }
 
   printf("Resultados obtenidos con una red entrenada previamente\n");
@@ -383,10 +392,10 @@ void Interface::evaluateForRealSamples(){
 
   if (result < 0.5) {
     //printf("Es una guitarra");
-    instrumentSelectedBuffer->set_text("Guitarra :)");
+    instrumentSelectedBuffer->set_text("Guitarra");
 	instrumentType = GUITAR;
   } else {
-    instrumentSelectedBuffer->set_text("Violin :)");
+    instrumentSelectedBuffer->set_text("Violin");
 	instrumentType = VIOLIN;
     //printf("Es un violin");
   }
@@ -445,7 +454,9 @@ void Interface::importTrainedNeuronalNetwork(){
   }
 
   infile.close();
+  hitsBuffer->set_text ("Informacion de hits no disponibles");
+  epochsBuffer->set_text ("Pesos cargados desde archivo");
   
-  printf("Se termino de exportar los datos\n");
+  printf("Se termino de importar la pesos de la red neuronal\n");
 }
 

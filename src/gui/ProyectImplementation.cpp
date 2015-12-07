@@ -101,13 +101,17 @@ Interface::Interface()
   leftGrid.attach(*instrumentTxtView,0,5,1,1);
   leftGrid.attach(*instrumentSelectedTxtView,3,5,1,1);
   //Last row
-  leftGrid.attach(quitBtn,0,6,3,1);
+  //leftGrid.attach(quitBtn,0,6,3,1);
 
   //Optional
   /*leftGrid.attach(changeNoteBtn,0,7,1,1);
   leftGrid.attach(changeStringBtn,0,8,1,1);
   leftGrid.attach(changeTunerBtn,0,9,1,1);
   leftGrid.attach(changeInstumentBtn,0,10,1,1);*/
+
+
+  /* window values */
+  set_resizable(false);
 
   // Neuronal Network
   //First Row

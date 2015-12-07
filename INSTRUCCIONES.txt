@@ -1,0 +1,18 @@
+Para compilar el proyecto es necesario hacerlo en Linux
+
+
+Dependencias:
+
+en Ubuntu
+
+- libgtkmm-3.0-dev
+
+
+
+
+para compilar solo es necesario ejecutar:
+
+# make
+
+
+esto generara el binario llamado netPtuner
